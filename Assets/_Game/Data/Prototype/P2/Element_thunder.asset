@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 930ab61cd75039b4f8a2a721f8637580, type: 3}
+  m_Name: Element_thunder
+  m_EditorClassIdentifier: 
+  Id: elm.thunder
+  Element: 6
+  DisplayNameKey: "\u96F7"
+  PrefabKey: ElementThunder
+  BlocksGround: 0
+  BaseStatusId: status.thunder
+  ProjectileModifier:
+    Element: 6
+    PhysicalAdd: 0
+    DamageAdd:
+      Water: 0
+      Fire: 0
+      Earth: 0
+      Wood: 0
+      Wind: 0
+      Thunder: 2
+    GaugeAdd:
+      Water: 0
+      Fire: 0
+      Earth: 0
+      Wood: 0
+      Wind: 0
+      Thunder: 25
+    DamageMultiplier: 1
+    SpeedMultiplier: 1
+  ContactEffects: []
+  ContactIntervalSeconds: 1

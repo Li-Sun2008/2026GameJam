@@ -1,0 +1,154 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81ed15aa645bb0a4c825d22bb46a8b87, type: 3}
+  m_Name: PrototypeCatalog
+  m_EditorClassIdentifier: 
+  Settings: {fileID: 11400000, guid: e44f3374f4fdae7409e70f2518e8a35b, type: 2}
+  Endless: {fileID: 11400000, guid: 84ccb92ac7881de469750c6abffdbcc1, type: 2}
+  PrefabEntries:
+  - Key: ElementWater
+    Prefab: {fileID: 4920242824643596548, guid: 5eed85b808b99034ca619e8c84ea4c77, type: 3}
+  - Key: ElementFire
+    Prefab: {fileID: 7720947471718303308, guid: 032ba70cf5c441948aafe2cfd0dac6d0, type: 3}
+  - Key: ElementEarth
+    Prefab: {fileID: 3599649833411737527, guid: 3d0d57d06919e0a429492052d3a7df85, type: 3}
+  - Key: ElementWood
+    Prefab: {fileID: 5660828381377284136, guid: 7b06f28bdbda7f64fa8620e016c7d8e2, type: 3}
+  - Key: ElementWind
+    Prefab: {fileID: 6877257714666312356, guid: fffa9b9182b3df6439f522841c2dbd9f, type: 3}
+  - Key: ElementThunder
+    Prefab: {fileID: 4545030074144843019, guid: e9af48eed54ed3746bf265d2c1195cd2, type: 3}
+  - Key: TowerBasic
+    Prefab: {fileID: 3934635557149303031, guid: 72ab62a6814fb5b42ba7736d86a1c64b, type: 3}
+  - Key: ProjectileBasic
+    Prefab: {fileID: 5794516414343774910, guid: 9895a6645498d5342aec5197da831652, type: 3}
+  - Key: EnemyProjectile
+    Prefab: {fileID: 8405840875736407798, guid: f9c9daf279436d842acc9c99ac278df3, type: 3}
+  - Key: EnemyGoblinMelee
+    Prefab: {fileID: 1032735301274358306, guid: f3472f0daf847a94bbec5686213d4686, type: 3}
+  - Key: EnemyGoblinRanged
+    Prefab: {fileID: 8761633847647929537, guid: ecea35be98f00b6429d114da87285333, type: 3}
+  - Key: EnemySoulKing
+    Prefab: {fileID: 6702698221392096915, guid: 810afe7ea7485a84a9cd3e3079a6cbc8, type: 3}
+  - Key: view.spring
+    Prefab: {fileID: 1404067193729501992, guid: 25ba2aac6d89b8b46a0377be6481172f, type: 3}
+  Levels:
+  - {fileID: 11400000, guid: 4f56d2a644827f844b21fa569c58301e, type: 2}
+  Elements:
+  - {fileID: 11400000, guid: 7b0ebcfdf133b63418c892e20f7433fa, type: 2}
+  - {fileID: 11400000, guid: 8603375ac3462114cb476b0b25b5afa0, type: 2}
+  - {fileID: 11400000, guid: 5c7f6f4b15e976f41b0e2c023eb5e535, type: 2}
+  - {fileID: 11400000, guid: d1f43636ea5d6874a80983871dd88eb0, type: 2}
+  - {fileID: 11400000, guid: 1f66958b389cad94999b52a6bf57ef05, type: 2}
+  - {fileID: 11400000, guid: 138cde86bf4fabd4981b4f5ca365b3ba, type: 2}
+  ProductionRules:
+  - {fileID: 11400000, guid: 760aa62c65d3e1a4991a2bd8fef58cbf, type: 2}
+  - {fileID: 11400000, guid: 94b19568722c12042af61e4ff9abb5f5, type: 2}
+  - {fileID: 11400000, guid: ea2db888cc7141f4c9e9b89cefcfeb56, type: 2}
+  - {fileID: 11400000, guid: f495af5ed593e8045b9e4d8f385ed926, type: 2}
+  - {fileID: 11400000, guid: 6f60335e73bfd8147ae78c7b42f2c7ff, type: 2}
+  - {fileID: 11400000, guid: 69a3836930d771d459cb050a8e91fc62, type: 2}
+  Reactions:
+  - {fileID: 11400000, guid: 042c690ac64a07247b2bbd1a3d17b304, type: 2}
+  - {fileID: 11400000, guid: 9724ea09b0db9bc4594d4fe390bc84d4, type: 2}
+  - {fileID: 11400000, guid: 6e06770abfa0e0f49a36d51df4446e9f, type: 2}
+  - {fileID: 11400000, guid: e6bd218909a78164384c55314c610faf, type: 2}
+  - {fileID: 11400000, guid: 7aa3aeca04c574a4b8b0672cc9a6cef7, type: 2}
+  - {fileID: 11400000, guid: 016790f40c4336d4eac8d6102e2a2cae, type: 2}
+  - {fileID: 11400000, guid: d18cb566612cd1243940d367895ff87d, type: 2}
+  - {fileID: 11400000, guid: 897d1488de6494048bc92ea4bc912967, type: 2}
+  - {fileID: 11400000, guid: 850dc13f82b845546a3f2563cc26c15f, type: 2}
+  - {fileID: 11400000, guid: b65aea6427b1e764dbca243c65acf42f, type: 2}
+  - {fileID: 11400000, guid: 91c931acb65c2fe458de7fef76c1746b, type: 2}
+  - {fileID: 11400000, guid: 3a779ee7cbc8faa4c972076a2ab233f3, type: 2}
+  - {fileID: 11400000, guid: 0cfbab800f83bf945a71f209507ce739, type: 2}
+  - {fileID: 11400000, guid: 595151a523f778940ab5facd7176e437, type: 2}
+  - {fileID: 11400000, guid: c1c327630f4906d48b6c80fea7323091, type: 2}
+  - {fileID: 11400000, guid: 76abc9e63fe405047a7ac057ad891fae, type: 2}
+  - {fileID: 11400000, guid: c84c70c5fe060b946bbb14294d5d27a2, type: 2}
+  - {fileID: 11400000, guid: 363a582a24e83df428ba93215e7b1fc8, type: 2}
+  - {fileID: 11400000, guid: 4fe1f0ebed1b040498bf1d4df6eef57d, type: 2}
+  - {fileID: 11400000, guid: 923626c6ec5cad340b58690fdb0ab808, type: 2}
+  - {fileID: 11400000, guid: b6931b3993904144c803fda6e9671560, type: 2}
+  - {fileID: 11400000, guid: 450dd27cf281b1c48b8d2c51d57d0d47, type: 2}
+  - {fileID: 11400000, guid: f14c81b081192e742a9a9a056a308fa6, type: 2}
+  - {fileID: 11400000, guid: a873f22bd4d3654488597e122bfdbc5b, type: 2}
+  - {fileID: 11400000, guid: 6a1514639aa8ac4449047e4dd7c993de, type: 2}
+  - {fileID: 11400000, guid: 34b7a7cef06b62a4caba7452377ff094, type: 2}
+  - {fileID: 11400000, guid: 814670c9bcacbce459154abe25a19798, type: 2}
+  - {fileID: 11400000, guid: 8edfd94b6d3a80d40a970268e2c8303e, type: 2}
+  - {fileID: 11400000, guid: 8b997f8e1e9c56049af5fcec05505ea0, type: 2}
+  - {fileID: 11400000, guid: f2dfada68bdb8d9438629a028c7c0938, type: 2}
+  - {fileID: 11400000, guid: 011a4ebd58a66c548b21af8c2b5222f9, type: 2}
+  - {fileID: 11400000, guid: 4f257bd7f370ee249aef92cadf6a6264, type: 2}
+  - {fileID: 11400000, guid: 01aa0f1d8fc3f8e4e8c1d2c269cdb03f, type: 2}
+  - {fileID: 11400000, guid: 435e6da6ffa0a7e43a55fb7c171aa091, type: 2}
+  - {fileID: 11400000, guid: 1481d1ea45afa394294df06e827477f9, type: 2}
+  - {fileID: 11400000, guid: 38a75c6fc12b77540bf67df49e1dfd16, type: 2}
+  - {fileID: 11400000, guid: e272204f1355bac4ea9291f4b3989555, type: 2}
+  - {fileID: 11400000, guid: 3f2453e252fb78145bb9912e2441d0f9, type: 2}
+  - {fileID: 11400000, guid: 3af7fefec79228949a2714faca6a74c3, type: 2}
+  - {fileID: 11400000, guid: 3495e215cff7ec249adc235e56debe25, type: 2}
+  - {fileID: 11400000, guid: 185bbd5080fde6b4594eb191a01df04e, type: 2}
+  - {fileID: 11400000, guid: e3fd0f5d478c0224796a1ad35a29b06b, type: 2}
+  Towers:
+  - {fileID: 11400000, guid: 1fdbbb2dbe8040a42ad4fc043672c62d, type: 2}
+  Projectiles:
+  - {fileID: 11400000, guid: 38d280f5829a62048ab9fa814a19e6c2, type: 2}
+  - {fileID: 11400000, guid: b78ce56a63991804a844a734760fbedc, type: 2}
+  Gauges:
+  - {fileID: 11400000, guid: 8a39d8afb1a405143a384cf9074ef03d, type: 2}
+  - {fileID: 11400000, guid: ccaa61adca967204086500bf5f72edf5, type: 2}
+  - {fileID: 11400000, guid: 1d556d93227fa404dbf87ea3e7fa8061, type: 2}
+  - {fileID: 11400000, guid: 443c9e82a0f35a6489d07921b4fa389e, type: 2}
+  - {fileID: 11400000, guid: f46bfafbf1089f444a02dd5fd4f61cfe, type: 2}
+  - {fileID: 11400000, guid: 910279f9283b9ee489745d71315db68b, type: 2}
+  Statuses:
+  - {fileID: 11400000, guid: 3ac5da52c1062cc44b09b78832de7bb5, type: 2}
+  - {fileID: 11400000, guid: 0be19639d7889bc478c24f43f75c8b43, type: 2}
+  - {fileID: 11400000, guid: 2eee4d28be7407b40ab9b4d0c12a5f67, type: 2}
+  - {fileID: 11400000, guid: bee876e6479da6a4691b70a2ab7157a9, type: 2}
+  - {fileID: 11400000, guid: 2bfb26e4758c7494e8163e67bc569cd8, type: 2}
+  - {fileID: 11400000, guid: 62b27bdf57935334c8e8db4b479a4c18, type: 2}
+  - {fileID: 11400000, guid: 64964ac59bb2154489a246a19905e42b, type: 2}
+  - {fileID: 11400000, guid: 20d433b10c975b54088aa3512196c058, type: 2}
+  - {fileID: 11400000, guid: ddf00626c9856bc4b97516adf167cf69, type: 2}
+  Skills:
+  - {fileID: 11400000, guid: c6cb6b8b38c04864b99f912d1d2c94bd, type: 2}
+  Enemies:
+  - {fileID: 11400000, guid: 7da3b38815e76fb458dd32486c6f57da, type: 2}
+  - {fileID: 11400000, guid: f9b1149dc40e722438254eaec670aa48, type: 2}
+  - {fileID: 11400000, guid: d2e3c1973d42ec94dbc581193c722630, type: 2}
+  - {fileID: 11400000, guid: d44d748b023e7ed4cb5c3dfcd640864e, type: 2}
+  StoryWaves:
+  - {fileID: 11400000, guid: dfed435183668454b8d50544ae9ef350, type: 2}
+  - {fileID: 11400000, guid: 7615c73c509e9d7459bfc474bafb5970, type: 2}
+  - {fileID: 11400000, guid: b7e57e90d92316644b48f1a9bdd168f1, type: 2}
+  - {fileID: 11400000, guid: 46cdd5d5c5dc3704496ff91b6a0f29a5, type: 2}
+  - {fileID: 11400000, guid: f382bbdcf81b86c4d8f363303d2a4af1, type: 2}
+  - {fileID: 11400000, guid: e09fd4b3c39da6542b7821e9dfbac1fe, type: 2}
+  - {fileID: 11400000, guid: d8f8183a744020e4a9ed7bf1d0e6d5c0, type: 2}
+  WaveTemplates:
+  - {fileID: 11400000, guid: a1a6fb1660c3b09498d5edf3ceec3280, type: 2}
+  BossSkills:
+  - {fileID: 11400000, guid: 6bbe32b1a21fbe040ad21d1c61e3a7b6, type: 2}
+  - {fileID: 11400000, guid: 029b18f83e7516a4a8cf80ec3c073a12, type: 2}
+  - {fileID: 11400000, guid: 940db75377bd76a46b6b5566c99212dd, type: 2}
+  DropTables:
+  - {fileID: 11400000, guid: a24b982035935a44184f11c5a2aba375, type: 2}
+  Items:
+  - {fileID: 11400000, guid: 7e7f4e66fc77630478e5aa7d1d5c203c, type: 2}
+  - {fileID: 11400000, guid: 5512d35a21a07d6488f3b35dafec70b6, type: 2}
+  DayEvents:
+  - {fileID: 11400000, guid: a8380850057273e47a251aeec852e9a8, type: 2}
+  Resources:
+  - {fileID: 11400000, guid: 2452b1754786c3f43932210d179d39ef, type: 2}

@@ -1,0 +1,17 @@
+{
+  "name": "Spotlight.Core",
+  "rootNamespace": "Spotlight.Core",
+  "references": [
+    "Spotlight.Contracts"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
+

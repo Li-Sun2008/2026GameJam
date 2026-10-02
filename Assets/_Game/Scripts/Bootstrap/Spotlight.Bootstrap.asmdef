@@ -1,0 +1,24 @@
+{
+  "name": "Spotlight.Bootstrap",
+  "rootNamespace": "Spotlight.Bootstrap",
+  "references": [
+    "Spotlight.Contracts",
+    "Spotlight.Core",
+    "Spotlight.Elements",
+    "Spotlight.Combat",
+    "Spotlight.Enemies",
+    "Spotlight.Gameplay",
+    "Spotlight.Presentation",
+    "UnityEngine.UI"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
+

@@ -1,0 +1,105 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
+using Spotlight.Contracts;
+using Spotlight.Presentation;
+
+namespace Spotlight.Bootstrap
+{
+    /// <summary>场景只挂此入口。业务由 ModuleComposition 统一创建，不在场景里查找服务。</summary>
+    [DisallowMultipleComponent]
+    public sealed class GameBootstrap : MonoBehaviour
+    {
+        public PrototypeCatalogSO CatalogAsset;
+        public Camera WorldCamera;
+        [Tooltip("留空使用玩家存档目录；自动测试可指定自己的临时目录。")]
+        public string SaveDirectoryOverride;
+        public ModuleComposition Services { get; private set; }
+        private RuntimeWorldRenderer2D worldView;
+        private GameView gameView;
+        private FeedbackService feedback;
+        private ViewPool pool;
+        private Guid focusPause;
+        private string startupError;
+
+        private void Awake()
+        {
+            try
+            {
+                if (CatalogAsset == null) throw new InvalidOperationException("缺少 PrototypeCatalog。请执行菜单「聚光灯/生成2D主程工程」，然后打开 00_Bootstrap 场景。");
+                string saveDirectory = string.IsNullOrEmpty(SaveDirectoryOverride) ? Path.Combine(Application.persistentDataPath, "Spotlight") : SaveDirectoryOverride;
+                Services = new ModuleComposition(CatalogAsset.BuildCatalogData(), saveDirectory);
+                Services.Events.OnListenerError = Debug.LogException;
+                if (WorldCamera == null) WorldCamera = Camera.main;
+                if (WorldCamera == null)
+                {
+                    GameObject cameraObject = new GameObject("WorldCamera");
+                    cameraObject.tag = "MainCamera";
+                    WorldCamera = cameraObject.AddComponent<Camera>();
+                }
+                WorldCamera.orthographic = true;
+                WorldCamera.orthographicSize = 5.5f;
+                WorldCamera.transform.position = new Vector3(0, 0, -10);
+                WorldCamera.backgroundColor = new Color(.07f, .09f, .14f);
+
+                Dictionary<string, GameObject> prefabs = new Dictionary<string, GameObject>(StringComparer.Ordinal);
+                if (CatalogAsset.PrefabEntries != null)
+                    foreach (PrefabEntry entry in CatalogAsset.PrefabEntries)
+                        if (entry != null && !string.IsNullOrEmpty(entry.Key) && entry.Prefab != null)
+                            prefabs.Add(entry.Key, entry.Prefab);
+                pool = new ViewPool(prefabs);
+                worldView = gameObject.AddComponent<RuntimeWorldRenderer2D>();
+                worldView.Bind(Services, pool);
+                gameView = gameObject.AddComponent<GameView>();
+                gameView.Bind(Services.ViewContext);
+                feedback = gameObject.AddComponent<FeedbackService>();
+                feedback.Bind(Services.Events, Services.Core.World);
+            }
+            catch (Exception error)
+            {
+                startupError = error.Message;
+                Debug.LogException(error, this);
+                if (Services != null) Services.Dispose();
+                Services = null;
+            }
+        }
+
+        private void Update()
+        {
+            if (Services != null) Services.Advance(Time.unscaledDeltaTime);
+        }
+
+        private void OnApplicationFocus(bool focused)
+        {
+            if (Services == null) return;
+            if (!focused && focusPause == Guid.Empty) focusPause = Services.Clock.AcquirePause(PauseReason.FocusLost);
+            if (focused && focusPause != Guid.Empty)
+            {
+                Services.Clock.ReleasePause(focusPause);
+                focusPause = Guid.Empty;
+            }
+        }
+
+        private void OnApplicationQuit()
+        {
+            if (Services == null || !Services.Flow.GetSnapshot().CanStartNight) return;
+            Services.Saves.SaveCheckpoint(Services.Core.Commands.Create(Services.Core.Transactions.Revision), SaveReason.Manual);
+        }
+
+        private void OnDestroy()
+        {
+            if (gameView != null) gameView.Unbind();
+            if (feedback != null) feedback.Unbind();
+            if (worldView != null) worldView.Unbind();
+            if (pool != null) pool.Clear();
+            if (Services != null) Services.Dispose();
+        }
+
+        private void OnGUI()
+        {
+            if (string.IsNullOrEmpty(startupError)) return;
+            GUI.Box(new Rect(20, 20, Mathf.Max(200, Screen.width - 40), 170), "工程启动失败\n\n" + startupError);
+        }
+    }
+}

@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbdbef7af1b5ff3419db50b31953d227, type: 3}
+  m_Name: Reaction_EnemyStatus_Wood_Wind
+  m_EditorClassIdentifier: 
+  Id: reaction.EnemyStatus.Wood.Wind
+  Enabled: 1
+  Context: 1
+  A: 4
+  B: 5
+  ConsumeA: 1
+  ConsumeB: 1
+  Priority: 100
+  Effects:
+  - Id: apply
+    Kind: 3
+    TargetPolicy: 0
+    ReferenceId: status.entangle
+    ResourceBucket: 0
+    ResourceAmount: 0
+    PhysicalDamage: 0
+    ElementDamage:
+      Water: 0
+      Fire: 0
+      Earth: 0
+      Wood: 0
+      Wind: 0
+      Thunder: 0
+    Gauge:
+      Water: 0
+      Fire: 0
+      Earth: 0
+      Wood: 0
+      Wind: 0
+      Thunder: 0
+    Amount: 0
+    Stacks: 1
+    DurationOverride: 0
+    DamageMultiplier: 1
+    SpeedMultiplier: 1

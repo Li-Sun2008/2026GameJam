@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b0c35ff743829449848b29f3fd5ff7f, type: 3}
+  m_Name: EndlessConfig
+  m_EditorClassIdentifier: 
+  Id: endless.default
+  WaveTemplateIds:
+  - wave.endless.template
+  HpGrowthPerNight: 0.25
+  DamageGrowthPerNight: 0.25
+  MilestoneNight: 50
+  MilestoneRewards:
+  - Bucket: 1
+    DefinitionId: res.gold
+    Amount: 100

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 743a95096fc83684994e003d61434e83, type: 3}
+  m_Name: ProjectileBasic
+  m_EditorClassIdentifier: 
+  Id: projectile.basic
+  PrefabKey: ProjectileBasic
+  SpeedInCellsPerSecond: 6
+  LifetimeSeconds: 10
+  CollisionRadiusInCells: 0.1

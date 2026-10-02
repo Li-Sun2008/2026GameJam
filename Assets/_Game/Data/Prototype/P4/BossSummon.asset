@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4997c12ac01ff1646b0e012de943b1e4, type: 3}
+  m_Name: BossSummon
+  m_EditorClassIdentifier: 
+  Id: boss.summon
+  PeriodSeconds: 20
+  FirstDelaySeconds: 20
+  Effects: []
+  Summons:
+  - Id: summon
+    EnemyId: enemy.goblin.melee
+    Count: 3
+    SpawnPointId: spawn.ground
+    PathId: path.ground
+    StartDelaySeconds: 0
+    SpawnIntervalSeconds: 1
+    ApplyDayGrowth: 0
+    HpMultiplier: 1
+    DamageMultiplier: 1
+  ProjectileId: 
+  ProjectileDamage: 0

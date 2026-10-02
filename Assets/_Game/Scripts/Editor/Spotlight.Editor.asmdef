@@ -1,0 +1,21 @@
+{
+  "name": "Spotlight.Editor",
+  "references": [
+    "Spotlight.Contracts",
+    "Spotlight.Core",
+    "Spotlight.Elements",
+    "Spotlight.Combat",
+    "Spotlight.Enemies",
+    "Spotlight.Gameplay",
+    "Spotlight.Presentation",
+    "Spotlight.Bootstrap",
+    "UnityEngine.UI",
+    "UnityEditor.TestRunner",
+    "UnityEngine.TestRunner"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "autoReferenced": false
+}
+

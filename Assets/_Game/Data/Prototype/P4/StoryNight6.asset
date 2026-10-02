@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f05f7a545497f45985b7b693c374a8, type: 3}
+  m_Name: StoryNight6
+  m_EditorClassIdentifier: 
+  Id: wave.story.6
+  DayIndex: 6
+  WaveIndex: 1
+  DelayAfterPreviousWaveSeconds: 0
+  Groups:
+  - Id: melee
+    EnemyId: enemy.goblin.melee
+    Count: 8
+    SpawnPointId: spawn.ground
+    PathId: path.ground
+    StartDelaySeconds: 0
+    SpawnIntervalSeconds: 1
+    ApplyDayGrowth: 1
+    HpMultiplier: 1
+    DamageMultiplier: 1
+  - Id: ranged
+    EnemyId: enemy.goblin.ranged
+    Count: 2
+    SpawnPointId: spawn.ground
+    PathId: path.ground
+    StartDelaySeconds: 4
+    SpawnIntervalSeconds: 1
+    ApplyDayGrowth: 1
+    HpMultiplier: 1
+    DamageMultiplier: 1
