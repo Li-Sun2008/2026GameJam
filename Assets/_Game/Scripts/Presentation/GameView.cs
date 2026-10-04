@@ -4,6 +4,7 @@ using Spotlight.Contracts;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 namespace Spotlight.Presentation
 {
@@ -12,6 +13,7 @@ namespace Spotlight.Presentation
         public string defaultLevelId = "level.prototype", towerId = "tower.basic";
         public uint seed = 1;
         public bool PreviewOnly;
+        public GameUiReferences UiPrefab;
         private GameViewContext services;
         private Canvas canvas;
         private Transform panel, actions, overlay;
@@ -31,30 +33,47 @@ namespace Spotlight.Presentation
         private bool selected, move, swap, blocked;
         private float statusRefreshTimer;
         private GamePhase renderedPhase = (GamePhase)(-1);
+        private GameUiReferences ui;
+        private GameObject generatedUi;
+        private sealed class ButtonBinding { internal Button Button; internal Button.ButtonClickedEvent Event; internal UnityAction Listener; }
+        private readonly List<ButtonBinding> buttonBindings = new List<ButtonBinding>();
 
         public void Bind(GameViewContext context)
         {
             if (context == null) throw new ArgumentNullException("context");
-            Unbind(); services = context; BuildWidgets();
+            Unbind(); services = context;
+            try
+            {
+            BuildUi();
             subscriptions.Add(context.Events.Subscribe<CommandFinishedEvent>(delegate(CommandFinishedEvent e) { if (pending.Remove(e.Result.CommandId)) Result(e.Result); }));
-            subscriptions.Add(context.Events.Subscribe<PhaseChangedEvent>(delegate(PhaseChangedEvent e) { CancelSelection(); RefreshAll(); }));
+            subscriptions.Add(context.Events.Subscribe<PhaseChangedEvent>(delegate(PhaseChangedEvent e) { CancelSelection(); ReleasePlayerPause(); RefreshAll(); }));
             subscriptions.Add(context.Events.Subscribe<BoardChangedEvent>(delegate(BoardChangedEvent e) { RefreshAll(); }));
             subscriptions.Add(context.Events.Subscribe<ResourcesChangedEvent>(delegate(ResourcesChangedEvent e) { RefreshAll(); }));
             subscriptions.Add(context.Events.Subscribe<HealthChangedEvent>(delegate(HealthChangedEvent e) { RefreshStatus(); }));
             subscriptions.Add(context.Events.Subscribe<WaveChangedEvent>(delegate(WaveChangedEvent e) { RefreshStatus(); }));
             subscriptions.Add(context.Events.Subscribe<SkillChangedEvent>(delegate(SkillChangedEvent e) { RefreshStatus(); }));
             subscriptions.Add(context.Events.Subscribe<DayEventChangedEvent>(delegate(DayEventChangedEvent e) { RefreshAll(); }));
+            subscriptions.Add(context.Events.Subscribe<ClockChangedEvent>(delegate(ClockChangedEvent e) { RefreshStatus(); }));
             RefreshAll();
+            }
+            catch { Unbind(); throw; }
         }
         public void Unbind()
         {
-            CancelSelection(); if (services != null && playerPause != Guid.Empty) services.Clock.ReleasePause(playerPause); playerPause = Guid.Empty;
+            CancelSelection(); ReleasePlayerPause();
             foreach (IDisposable s in subscriptions) s.Dispose(); subscriptions.Clear(); pending.Clear(); services = null;
-            if (canvas != null) PresentationObjects.Release(canvas.gameObject); canvas = null; overlay = panel = actions = null;
+            foreach(ButtonBinding binding in buttonBindings)binding.Event.RemoveListener(binding.Listener);
+            buttonBindings.Clear();
+            if(generatedUi!=null){generatedUi.SetActive(false);PresentationObjects.Release(generatedUi);}generatedUi=null;ui=null;
+            if(ownedEvents!=null){ownedEvents.SetActive(false);PresentationObjects.Release(ownedEvents);}ownedEvents=null;
+            canvas = null; overlay = panel = actions = null;
+            title=health=wave=skill=gold=note=selection=null;
+            Array.Clear(hands,0,hands.Length);Array.Clear(items,0,items.Length);
+            selected=false;blocked=false;cell=new CellCoord();statusRefreshTimer=0;
             renderedPhase = (GamePhase)(-1);
         }
         private void Start() { if (PreviewOnly && services == null) TestWidgets(); }
-        private void OnDestroy() { Unbind(); if (ownedEvents != null) PresentationObjects.Release(ownedEvents); ownedEvents = null; }
+        private void OnDestroy() { Unbind(); }
         private CommandContext Command() { return services.Commands.Create(services.Flow.GetSnapshot().Revision); }
         private void Result(OperationResult result)
         {
@@ -92,16 +111,29 @@ namespace Spotlight.Presentation
         private void RefreshStatus()
         {
             if (services == null || title == null) return; FlowSnapshot f = services.Flow.GetSnapshot();
-            title.text = "聚光灯 · 第 " + f.DayIndex + " 天 · " + PhaseName(f.Phase);
+            title.text = ui!=null&&ui.DayText!=null&&ui.PhaseText!=null?"聚光灯":"聚光灯 · 第 " + f.DayIndex + " 天 · " + PhaseName(f.Phase);
             ActorSnapshot spring; health.text = services.World.TryGetActor(services.World.SpringId, out spring) ? "灵泉 " + Mathf.CeilToInt(spring.CurrentHp) + " / " + Mathf.CeilToInt(spring.MaxHp) : "守护灵泉";
             WaveSnapshot w = services.Waves.GetSnapshot(); wave.text = "波次 " + w.WaveIndex + " · 敌人 " + w.AliveCount;
             SpecialSkillSnapshot s = services.Skill.GetSnapshot(); skill.text = "技能 " + s.UsesRemaining + " 次" + (s.RemainingSeconds > 0 ? " · 强化 " + Mathf.CeilToInt(s.RemainingSeconds) + " 秒" : "");
             gold.text = "金币 " + services.Resources.GetQuantity(ResourceBucket.Inventory, "res.gold");
+            if(ui!=null)
+            {
+                ClockSnapshot clock=services.Clock.GetSnapshot();
+                if(ui.DayText!=null)ui.DayText.text="第 "+f.DayIndex+" 天";
+                if(ui.PhaseText!=null)ui.PhaseText.text=PhaseName(f.Phase);
+                if(ui.SpeedText!=null)ui.SpeedText.text=(int)clock.Speed+" 倍"+(clock.IsPaused?" · 已暂停":"");
+                if(ui.PauseButtonText!=null)ui.PauseButtonText.text=playerPause!=Guid.Empty?"继续":"暂停";
+                if(ui.SpringHpBar!=null)
+                {
+                    ui.SpringHpBar.minValue=0;ui.SpringHpBar.maxValue=spring==null?1:Mathf.Max(1,spring.MaxHp);
+                    ui.SpringHpBar.SetValueWithoutNotify(spring==null?0:Mathf.Clamp(spring.CurrentHp,0,spring.MaxHp));
+                }
+            }
         }
         private static string PhaseName(GamePhase p) { switch(p) { case GamePhase.Menu:return "开始旅程"; case GamePhase.Build:return "白天部署"; case GamePhase.Night:return "夜晚守护"; case GamePhase.DayEvent:return "今日事件"; case GamePhase.NightResult:return "守护成功"; case GamePhase.Ending:return "旅程完成"; case GamePhase.GameOver:return "灵泉失守"; default:return "迎接黎明"; } }
         private void DrawActions(GamePhase phase)
         {
-            if (actions != null) PresentationObjects.Release(actions.gameObject); actions = Rect(panel, "Actions", 0, 0, 1020, 720);
+            ReleaseContainer(actions); actions = Rect(ActionMount, "Actions", 0, 0, 1020, 720);
             int index = 0;
             if (phase == GamePhase.Menu) { ActionButton("故事模式", index++, delegate { NewRun(GameMode.Story); }); ActionButton("无尽模式", index++, delegate { NewRun(GameMode.Endless); }); ActionButton("继续游戏", index++, Load); }
             if (phase == GamePhase.Build) {
@@ -122,8 +154,16 @@ namespace Spotlight.Presentation
             if (phase == GamePhase.Ending) { ActionButton("返回菜单", index++, Menu); if (services.Flow.GetSnapshot().Mode == GameMode.Endless) ActionButton("继续无尽挑战", index++, delegate { Result(services.Flow.TryContinueEndless(Command())); }); }
         }
         private void ActionButton(string text, int i, Action action) { Button(actions, text, 24 + i % 4 * 236, 622 + i / 4 * 44, 220, 38, action); }
-        private void NewRun(GameMode mode) { Result(services.Flow.TryNewRun(Command(), new NewRunRequest { LevelId = defaultLevelId, Mode = mode, Seed = seed })); }
-        private void Menu() { Result(services.Flow.TryReturnToMenu(Command())); }
+        private void NewRun(GameMode mode)
+        {
+            OperationResult result=services.Flow.TryNewRun(Command(),new NewRunRequest {LevelId=defaultLevelId,Mode=mode,Seed=seed});
+            if(result.State==OperationState.Committed){CancelSelection();ReleasePlayerPause();}Result(result);
+        }
+        private void Menu()
+        {
+            OperationResult result=services.Flow.TryReturnToMenu(Command());
+            if(result.State==OperationState.Committed){CancelSelection();ReleasePlayerPause();}Result(result);
+        }
         private void Load() { SaveReadResult save = services.Saves.ReadCheckpoint(); if (save.Error != ErrorCode.None || save.Data == null) { note.text = ErrorText(save.Error); return; } Result(services.Flow.TryLoadRun(Command(), save.Data)); }
         private void Place(string id) { if (services == null || services.Flow.GetSnapshot().Phase != GamePhase.Build) return; placing = id; move = swap = false; note.text = "点击空格放置，或点取消"; }
         private void ChooseMove(bool exchange) { if (!selected) { note.text = "先点选元素或塔"; return; } placing = null; move = !exchange; swap = exchange; note.text = exchange ? "点击要交换的格子" : "点击要移往的空格"; }
@@ -136,6 +176,11 @@ namespace Spotlight.Presentation
             if (selectedItem != null) { SelectItemTarget(world); return; }
             if (services.Flow.GetSnapshot().Phase != GamePhase.Build) return;
             CellCoord clicked; if (!services.Board.TryWorldToCell(world, out clicked)) return;
+            HandleBoardClick(clicked);
+        }
+        private void HandleBoardClick(CellCoord clicked)
+        {
+            if(services==null||blocked||services.Flow.GetSnapshot().Phase!=GamePhase.Build)return;
             if (move || swap) { OperationResult r = swap ? services.Deployment.TrySwap(Command(), cell, clicked) : services.Deployment.TryMove(Command(), cell, clicked); move = swap = false; Result(r); return; }
             if (placing != null) { Result(services.Deployment.TryPlace(Command(), new PlacementRequest { Cell = clicked, DefinitionId = placing, Kind = placing == towerId ? OccupantKind.Tower : OccupantKind.ElementBlock })); return; }
             CellSnapshot c; selected = services.Board.TryGetCell(clicked, out c) && c.OccupantKind != OccupantKind.None; cell = clicked;
@@ -155,11 +200,12 @@ namespace Spotlight.Presentation
         }
         private void UseItem(EntityId target) { OperationResult result = services.Items.TryUse(Command(), new ItemUseRequest { ItemId = selectedItem, Target = target }); ReleaseItem(); Result(result); }
         private void ReleaseItem() { selectedItem = null; if (services != null && itemPause != Guid.Empty) services.Clock.ReleasePause(itemPause); itemPause = Guid.Empty; }
+        private void ReleasePlayerPause() { if(services!=null&&playerPause!=Guid.Empty)services.Clock.ReleasePause(playerPause);playerPause=Guid.Empty; }
         private void CancelSelection() { ReleaseItem(); placing = null; move = swap = false; }
         private void Pause() { if (services == null) return; if (playerPause == Guid.Empty) playerPause = services.Clock.AcquirePause(PauseReason.Player); else { services.Clock.ReleasePause(playerPause); playerPause = Guid.Empty; } note.text = playerPause == Guid.Empty ? "继续守护" : "已暂停"; }
         private void DrawModal()
         {
-            if (overlay != null) PresentationObjects.Release(overlay.gameObject); overlay = null; blocked = false;
+            ReleaseContainer(overlay); overlay = null; blocked = false;
             FlowSnapshot flow = services.Flow.GetSnapshot();
             if (flow.Phase == GamePhase.DayEvent) {
                 DayEventSnapshot day = services.DayEvents.GetSnapshot(); if (day == null || day.State == null || day.State.Resolved) return;
@@ -171,15 +217,17 @@ namespace Spotlight.Presentation
         }
         private void Modal(string caption, string body)
         {
-            overlay = Rect(panel, "Modal", 0, 0, 1280, 720); Image(overlay, new Color(0.02f,0.04f,0.08f,0.88f)); overlay.SetAsLastSibling(); blocked = true;
+            ReleaseContainer(overlay);
+            overlay = Rect(ModalMount, "Modal", 0, 0, 1280, 720); Image(overlay, new Color(0.02f,0.04f,0.08f,0.88f)); overlay.SetAsLastSibling();if(ui!=null)ui.ModalRoot.SetAsLastSibling(); blocked = true;
             Image(Rect(overlay, "Card", 220, 135, 840, 480), new Color(0.13f,0.19f,0.28f)); Label(overlay, caption, 260, 165, 760, 48, 30);
             Text text = Label(overlay, body, 260, 225, 760, 106, 21); text.alignment = TextAnchor.UpperLeft;
         }
         private void BuildWidgets()
         {
             font = CreateFont(); GameObject obj = new GameObject("Game UI", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster)); obj.transform.SetParent(transform,false);
+            generatedUi=obj;
             canvas = obj.GetComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 50; CanvasScaler scaler = obj.GetComponent<CanvasScaler>(); scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize; scaler.referenceResolution = new Vector2(1280,720); scaler.matchWidthOrHeight = 0.5f; panel = obj.transform;
-            if (EventSystem.current == null) ownedEvents = new GameObject("UI Event System",typeof(EventSystem),typeof(StandaloneInputModule));
+            EnsureEventSystem();
             Image(Rect(panel,"Header",0,0,1280,90),new Color(0.08f,0.12f,0.19f,0.97f)); Image(Rect(panel,"Sidebar",1020,90,260,630),new Color(0.08f,0.12f,0.19f,0.97f));
             title = Label(panel,"聚光灯",24,12,520,32,25); health = Label(panel,"灵泉",550,14,230,30,22); wave = Label(panel,"波次",800,14,220,30,20); note = Label(panel,"白天部署，夜晚守护灵泉。",24,53,980,26,17);
             gold = Label(panel,"金币 0",1040,104,220,30,21); skill = Label(panel,"技能 1 次",1040,140,220,30,18); selection = Label(panel,"请选择元素或塔",1040,180,220,46,16); Label(panel,"手牌 · 点击后放置",1040,238,220,24,18);
@@ -191,18 +239,67 @@ namespace Spotlight.Presentation
         }
         public void TestWidgets()
         {
-            if (services!=null) return; if (canvas==null) BuildWidgets(); title.text="聚光灯 · 第 1 天 · 白天部署"; health.text="灵泉 100 / 100"; wave.text="波次 0 · 敌人 0"; gold.text="金币 20";
+            if (services!=null) return; if (canvas==null){try{BuildUi();}catch{Unbind();throw;}} title.text="聚光灯 · 第 1 天 · 白天部署"; health.text="灵泉 100 / 100"; wave.text="波次 0 · 敌人 0"; gold.text="金币 20";
             for(int i=0;i<6;i++) hands[i].text=names[i]+" × 3"; items[0].text="回复药剂 × 2"; items[1].text="塔强化 × 2";
-            if(actions!=null) PresentationObjects.Release(actions.gameObject); actions=Rect(panel,"Preview Actions",0,0,1020,720);
+            ReleaseContainer(actions); actions=Rect(ActionMount,"Preview Actions",0,0,1020,720);
             ActionButton("开始这一夜（预览）",0,delegate { title.text="聚光灯 · 第 1 天 · 夜晚守护"; note.text="界面预览：游戏流程由正式场景运行。"; });
             ActionButton("查看事件（预览）",1,delegate { Modal("今日事件","旅人送来了守护灵泉的补给。\n选择一个选项继续。"); Button(overlay,"收下补给（预览）",420,420,440,50,delegate { PresentationObjects.Release(overlay.gameObject); overlay=null; blocked=false; note.text="预览：补给已收下"; }); });
             note.text="界面预览 · 按钮只展示交互，不改变游戏进度。";
         }
         public static Font CreateFont() { Font value=Font.CreateDynamicFontFromOSFont(new string[] {"Microsoft YaHei","SimHei","Arial"},20); return value!=null?value:Resources.GetBuiltinResource<Font>("Arial.ttf"); }
+        private Transform ActionMount { get { return ui!=null?(Transform)ui.ActionsRoot:panel; } }
+        private Transform ModalMount { get { return ui!=null?(Transform)ui.ModalRoot:panel; } }
+        private void BuildUi()
+        {
+            if(UiPrefab==null){BuildWidgets();return;}
+            string error;
+            if(!UiPrefab.Validate(out error))throw new InvalidOperationException(error);
+            ui=Instantiate(UiPrefab,transform,false);generatedUi=ui.gameObject;
+            if(!ui.Validate(out error))throw new InvalidOperationException(error);
+            canvas=ui.Canvas;panel=canvas.transform;font=ui.TitleText.font!=null?ui.TitleText.font:CreateFont();
+            title=ui.TitleText;health=ui.SpringHpText;wave=ui.WaveText;skill=ui.SkillText;gold=ui.GoldText;note=ui.HintText;selection=ui.SelectionText;
+            for(int i=0;i<hands.Length;i++){int index=i;hands[i]=ui.HandTexts[i];BindButton(ui.ElementButtons[i],delegate {Place(ids[index]);});}
+            for(int i=0;i<items.Length;i++){int index=i;items[i]=ui.ItemTexts[i];BindButton(ui.ItemButtons[i],delegate {BeginItem(index);});}
+            BindButton(ui.CancelSelectionButton,delegate {CancelSelection();note.text="选择已取消";});
+            BindButton(ui.PauseButton,Pause);
+            BindButton(ui.NormalSpeedButton,delegate {if(services!=null)Result(services.Clock.TrySetSpeed(Command(),GameSpeed.Normal));});
+            BindButton(ui.DoubleSpeedButton,delegate {if(services!=null)Result(services.Clock.TrySetSpeed(Command(),GameSpeed.Double));});
+            EnsureEventSystem();
+        }
+        private void EnsureEventSystem()
+        {
+            if(EventSystem.current!=null)return;
+            if(ownedEvents!=null)
+            {
+                EventSystem owned=ownedEvents.GetComponent<EventSystem>();
+                if(owned!=null&&owned.enabled&&owned.gameObject.activeInHierarchy)return;
+                ownedEvents.SetActive(false);PresentationObjects.Release(ownedEvents);ownedEvents=null;
+            }
+            // EditMode may contain an active EventSystem before its OnEnable sets current.
+            foreach(EventSystem existing in FindObjectsOfType<EventSystem>())
+                if(existing.enabled&&existing.gameObject.activeInHierarchy)return;
+            ownedEvents=new GameObject("UI Event System",typeof(EventSystem),typeof(StandaloneInputModule));
+            ownedEvents.transform.SetParent(transform,false);
+        }
+        private void BindButton(Button button,Action action)
+        {
+            UnityAction listener=delegate {if(action!=null)action();};
+            buttonBindings.Add(new ButtonBinding {Button=button,Event=button.onClick,Listener=listener});button.onClick.AddListener(listener);
+        }
+        private void ReleaseContainer(Transform container)
+        {
+            if(container==null)return;
+            for(int i=buttonBindings.Count-1;i>=0;i--)
+            {
+                ButtonBinding binding=buttonBindings[i];
+                if(binding.Button==null||binding.Button.transform.IsChildOf(container)){binding.Event.RemoveListener(binding.Listener);buttonBindings.RemoveAt(i);}
+            }
+            container.gameObject.SetActive(false);PresentationObjects.Release(container.gameObject);
+        }
         private static RectTransform Rect(Transform parent,string name,float x,float y,float w,float h) { GameObject o=new GameObject(name,typeof(RectTransform)); o.transform.SetParent(parent,false); RectTransform r=o.GetComponent<RectTransform>(); r.anchorMin=r.anchorMax=new Vector2(0,1); r.pivot=new Vector2(0,1); r.anchoredPosition=new Vector2(x,-y); r.sizeDelta=new Vector2(w,h); return r; }
         private static void Image(Transform t,Color color) { t.gameObject.AddComponent<Image>().color=color; }
         private Text Label(Transform parent,string text,float x,float y,float w,float h,int size) { Text t=Rect(parent,"Label",x,y,w,h).gameObject.AddComponent<Text>(); t.font=font;t.text=text;t.fontSize=size;t.color=new Color(0.94f,0.96f,1);t.alignment=TextAnchor.MiddleLeft;t.raycastTarget=false;t.horizontalOverflow=HorizontalWrapMode.Wrap;t.verticalOverflow=VerticalWrapMode.Truncate;return t; }
-        private Button Button(Transform parent,string text,float x,float y,float w,float h,Action action) { RectTransform r=Rect(parent,text,x,y,w,h);Image(r,new Color(0.21f,0.34f,0.46f));Button b=r.gameObject.AddComponent<Button>();Text l=Label(r,text,5,0,w-10,h,17);l.alignment=TextAnchor.MiddleCenter;b.onClick.AddListener(delegate {if(action!=null)action();});return b; }
+        private Button Button(Transform parent,string text,float x,float y,float w,float h,Action action) { RectTransform r=Rect(parent,text,x,y,w,h);Image(r,new Color(0.21f,0.34f,0.46f));Button b=r.gameObject.AddComponent<Button>();Text l=Label(r,text,5,0,w-10,h,17);l.alignment=TextAnchor.MiddleCenter;BindButton(b,action);return b; }
     }
 }
 

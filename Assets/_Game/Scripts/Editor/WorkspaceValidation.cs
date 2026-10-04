@@ -46,6 +46,13 @@ namespace Spotlight.Editor
         private static void CheckRequest()
         {
             if (running || EditorApplication.isCompiling || EditorApplication.isUpdating || EditorApplication.isPlayingOrWillChangePlaymode) return;
+            string formalUi = Path.Combine(Root, "request-ui-setup.txt");
+            if (File.Exists(formalUi))
+            {
+                File.Delete(formalUi);
+                FormalUiSetupTool.Generate();
+                return;
+            }
             string setup = Path.Combine(Root, "request-setup.txt");
             if (File.Exists(setup))
             {

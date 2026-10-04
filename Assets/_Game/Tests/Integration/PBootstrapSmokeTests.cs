@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
 using UnityEditor;
@@ -19,15 +20,18 @@ namespace Spotlight.Tests.Integration
         private GameObject root, cameraObject;
         private Scene scene, previous;
         private string directory;
+        private readonly List<KeyValuePair<GameObject,bool>> previousRoots=new List<KeyValuePair<GameObject,bool>>();
 
         [UnityTest] public IEnumerator NativeAwakeBuildsUiSpritesAndCapturesPreview()
         {
             yield return new EnterPlayMode();
             previous=SceneManager.GetActiveScene();
+            previousRoots.Clear();for(int i=0;i<SceneManager.sceneCount;i++)foreach(GameObject obj in SceneManager.GetSceneAt(i).GetRootGameObjects())previousRoots.Add(new KeyValuePair<GameObject,bool>(obj,obj.activeSelf));
+            foreach(KeyValuePair<GameObject,bool> state in previousRoots)if(state.Key!=null)state.Key.SetActive(false);
             scene=SceneManager.CreateScene("Spotlight_NativeSmoke_"+Guid.NewGuid().ToString("N"));SceneManager.SetActiveScene(scene);
             PrototypeCatalogSO catalog=AssetDatabase.LoadAssetAtPath<PrototypeCatalogSO>(PrototypeCatalogFactory.CatalogPath);Assert.NotNull(catalog);
             directory=Path.Combine(Path.GetTempPath(),"Spotlight_NativeSmoke_"+Guid.NewGuid().ToString("N"));Directory.CreateDirectory(directory);
-            cameraObject=new GameObject("Smoke Camera");cameraObject.tag="MainCamera";Camera camera=cameraObject.AddComponent<Camera>();camera.orthographic=true;camera.transform.position=new Vector3(0,0,-10);
+            cameraObject=new GameObject("Smoke Camera");cameraObject.tag="MainCamera";Camera camera=cameraObject.AddComponent<Camera>();cameraObject.AddComponent<AudioListener>();camera.orthographic=true;camera.transform.position=new Vector3(0,0,-10);
             root=new GameObject("Smoke Bootstrap");root.SetActive(false);GameBootstrap bootstrap=root.AddComponent<GameBootstrap>();bootstrap.CatalogAsset=catalog;bootstrap.WorldCamera=camera;bootstrap.SaveDirectoryOverride=directory;root.SetActive(true);
             yield return null;yield return null;yield return null;
             Assert.NotNull(bootstrap.Services,"Native Awake must construct the real service composition without startup errors");
@@ -71,6 +75,7 @@ namespace Spotlight.Tests.Integration
         [UnityTearDown] public IEnumerator CleanupNativeScene()
         {
             if(root!=null)UnityEngine.Object.Destroy(root);if(cameraObject!=null)UnityEngine.Object.Destroy(cameraObject);yield return null;
+            foreach(KeyValuePair<GameObject,bool> state in previousRoots)if(state.Key!=null)state.Key.SetActive(state.Value);previousRoots.Clear();
             if(previous.IsValid()&&previous.isLoaded)SceneManager.SetActiveScene(previous);
             if(scene.IsValid()&&scene.isLoaded){AsyncOperation unload=SceneManager.UnloadSceneAsync(scene);if(unload!=null)yield return unload;}
             if(directory!=null&&Directory.Exists(directory))
