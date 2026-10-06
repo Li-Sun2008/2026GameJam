@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Spotlight.Presentation.Elements
+namespace Spotlight.Presentation
 {
     /// <summary>只缩放 Visual 子节点；时间由主程逐帧传入，组件自身不写 Update。</summary>
     [DisallowMultipleComponent]
