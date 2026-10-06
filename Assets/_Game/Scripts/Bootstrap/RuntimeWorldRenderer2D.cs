@@ -44,20 +44,20 @@ namespace Spotlight.Bootstrap
                 foreach (ActorSnapshot actor in services.Core.World.GetActors(kind))
                 {
                     string prefabKey = ActorPrefab(actor);
-                    Show("actor:" + actor.Id.Value, prefabKey, actor.Position, kind == ActorKind.Spring ? 10 : 20);
+                    Show("actor:" + actor.Id.Value, prefabKey, actor.Position, kind == ActorKind.Spring ? 10 : 20, actor);
                 }
             foreach (CellSnapshot cell in services.Core.Board.GetSnapshot().Cells)
             {
                 if (cell.OccupantKind != OccupantKind.ElementBlock) continue;
                 ElementDefinition definition;
                 if (services.Catalog.TryGetElement(cell.DefinitionId, out definition))
-                    Show("block:" + cell.OccupantId.Value, definition.PrefabKey, services.Core.Board.CellToWorld(cell.Cell), 5);
+                    Show("block:" + cell.OccupantId.Value, definition.PrefabKey, services.Core.Board.CellToWorld(cell.Cell), 5, null);
             }
             foreach (ProjectileSnapshot projectile in services.Combat.Projectiles.GetSnapshot())
             {
                 ProjectileDefinition definition;
                 if (services.Catalog.TryGetProjectile(services.Combat.GetProjectileDefinitionId(projectile.ProjectileId), out definition))
-                    Show("projectile:" + projectile.ProjectileId, definition.PrefabKey, projectile.Position, 30);
+                    Show("projectile:" + projectile.ProjectileId, definition.PrefabKey, projectile.Position, 30, null);
             }
             foreach (string key in new List<string>(views.Keys))
                 if (!visible.Contains(key)) { pool.Return(views[key].LeaseId); views.Remove(key); }
@@ -73,7 +73,7 @@ namespace Spotlight.Bootstrap
             return null;
         }
 
-        private void Show(string key, string prefabKey, WorldPoint position, int order)
+        private void Show(string key, string prefabKey, WorldPoint position, int order, ActorSnapshot actor)
         {
             if (string.IsNullOrEmpty(prefabKey)) return;
             PoolLease lease;
@@ -87,6 +87,9 @@ namespace Spotlight.Bootstrap
             view.transform.position = new Vector3(position.X, position.Y, 0);
             SpriteRenderer renderer = view.GetComponent<SpriteRenderer>();
             if (renderer != null) renderer.sortingOrder = order;
+            EnemyHealthBar2D healthBar = view.GetComponent<EnemyHealthBar2D>();
+            if (healthBar != null && actor != null && actor.Kind == ActorKind.Enemy)
+                healthBar.ApplyHealth(actor.CurrentHp, actor.MaxHp);
             visible.Add(key);
         }
 
