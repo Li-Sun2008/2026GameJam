@@ -8,18 +8,42 @@ namespace Spotlight.Presentation
         public Transform VisualRoot;
         public SpriteRenderer ElementOverlay;
 
+        private Quaternion baseRotation;
+        private Color baseColor;
+        private bool cachedRotation;
+        private bool cachedColor;
+
+        private void Awake() { CacheBaseVisual(); }
+        private void OnEnable() { ResetVisual(); }
+        private void OnDisable() { ResetVisual(); }
+
+        private void CacheBaseVisual()
+        {
+            if (!cachedRotation && VisualRoot != null)
+            {
+                baseRotation = VisualRoot.localRotation;
+                cachedRotation = true;
+            }
+            if (!cachedColor && ElementOverlay != null)
+            {
+                baseColor = ElementOverlay.color;
+                cachedColor = true;
+            }
+        }
+
         private static readonly Color[] ElementColors =
         {
             new Color32(64, 156, 255, 255),  // Ë®
-            new Color32(255, 83, 64, 255),   // »ð
-            new Color32(190, 146, 62, 255),  // ÍÁ
+            new Color32(255, 83, 64, 255),   // ï¿½ï¿½
+            new Color32(190, 146, 62, 255),  // ï¿½ï¿½
             new Color32(62, 190, 104, 255),  // Ä¾
-            new Color32(89, 224, 184, 255),  // ·ç
-            new Color32(177, 100, 255, 255)  // À×
+            new Color32(89, 224, 184, 255),  // ï¿½ï¿½
+            new Color32(177, 100, 255, 255)  // ï¿½ï¿½
         };
 
         public void SetDirection(WorldPoint direction)
         {
+            CacheBaseVisual();
             if (VisualRoot == null) return;
 
             float lengthSq =
@@ -41,6 +65,7 @@ namespace Spotlight.Presentation
 
         public void SetElements(int appliedElementMask)
         {
+            CacheBaseVisual();
             if (ElementOverlay == null) return;
 
             int index = FirstKnownElement(appliedElementMask);
@@ -53,13 +78,14 @@ namespace Spotlight.Presentation
 
         public void ResetVisual()
         {
+            CacheBaseVisual();
             if (VisualRoot != null)
-                VisualRoot.localRotation = Quaternion.identity;
+                VisualRoot.localRotation = baseRotation;
 
             if (ElementOverlay != null)
             {
                 ElementOverlay.enabled = false;
-                ElementOverlay.color = Color.white;
+                ElementOverlay.color = baseColor;
             }
         }
 

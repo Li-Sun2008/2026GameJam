@@ -37,6 +37,12 @@ namespace Spotlight.Presentation
         private GameObject generatedUi;
         private sealed class ButtonBinding { internal Button Button; internal Button.ButtonClickedEvent Event; internal UnityAction Listener; }
         private readonly List<ButtonBinding> buttonBindings = new List<ButtonBinding>();
+        private string modalKey;
+        private string modalRunId;
+        private Guid modalPending;
+        private bool modalSubmitting;
+        private readonly List<Button> modalButtons = new List<Button>();
+        private Text modalFeedback;
 
         public void Bind(GameViewContext context)
         {
@@ -45,7 +51,10 @@ namespace Spotlight.Presentation
             try
             {
             BuildUi();
-            subscriptions.Add(context.Events.Subscribe<CommandFinishedEvent>(delegate(CommandFinishedEvent e) { if (pending.Remove(e.Result.CommandId)) Result(e.Result); }));
+            subscriptions.Add(context.Events.Subscribe<CommandFinishedEvent>(delegate(CommandFinishedEvent e) {
+                if(e.Result.CommandId==modalPending){modalPending=Guid.Empty;SetModalInteractable(true);}
+                if (pending.Remove(e.Result.CommandId)) Result(e.Result);
+            }));
             subscriptions.Add(context.Events.Subscribe<PhaseChangedEvent>(delegate(PhaseChangedEvent e) { CancelSelection(); ReleasePlayerPause(); RefreshAll(); }));
             subscriptions.Add(context.Events.Subscribe<BoardChangedEvent>(delegate(BoardChangedEvent e) { RefreshAll(); }));
             subscriptions.Add(context.Events.Subscribe<ResourcesChangedEvent>(delegate(ResourcesChangedEvent e) { RefreshAll(); }));
@@ -71,15 +80,16 @@ namespace Spotlight.Presentation
             Array.Clear(hands,0,hands.Length);Array.Clear(items,0,items.Length);
             selected=false;blocked=false;cell=new CellCoord();statusRefreshTimer=0;
             renderedPhase = (GamePhase)(-1);
+            modalKey=null;modalRunId=null;modalPending=Guid.Empty;modalSubmitting=false;modalButtons.Clear();modalFeedback=null;
         }
         private void Start() { if (PreviewOnly && services == null) TestWidgets(); }
         private void OnDestroy() { Unbind(); }
         private CommandContext Command() { return services.Commands.Create(services.Flow.GetSnapshot().Revision); }
         private void Result(OperationResult result)
         {
-            if (result.State == OperationState.Queued) { pending.Add(result.CommandId); note.text = "正在处理…"; }
+            if (result.State == OperationState.Queued) { pending.Add(result.CommandId); note.text = "正在处理…";if(modalFeedback!=null)modalFeedback.text=note.text; }
             else if (result.State == OperationState.Committed) { note.text = "完成"; RefreshAll(); }
-            else note.text = ErrorText(result.Error);
+            else {note.text = ErrorText(result.Error);if(modalFeedback!=null)modalFeedback.text=note.text;}
         }
         private static string ErrorText(ErrorCode e)
         {
@@ -205,22 +215,80 @@ namespace Spotlight.Presentation
         private void Pause() { if (services == null) return; if (playerPause == Guid.Empty) playerPause = services.Clock.AcquirePause(PauseReason.Player); else { services.Clock.ReleasePause(playerPause); playerPause = Guid.Empty; } note.text = playerPause == Guid.Empty ? "继续守护" : "已暂停"; }
         private void DrawModal()
         {
-            ReleaseContainer(overlay); overlay = null; blocked = false;
             FlowSnapshot flow = services.Flow.GetSnapshot();
+            if(modalRunId!=flow.RunId){modalRunId=flow.RunId;modalPending=Guid.Empty;}
+            DayEventSnapshot day=flow.Phase==GamePhase.DayEvent?services.DayEvents.GetSnapshot():null;
+            string tutorial=services.Catalog.GetSettings().TutorialText;
+            bool eventOpen=day!=null&&day.State!=null&&!day.State.Resolved;
+            bool tutorialOpen=flow.Phase==GamePhase.Build&&!flow.TutorialShown&&!String.IsNullOrEmpty(tutorial);
+            string key=null;
+            if(eventOpen){key=flow.RunId+"/event/"+day.State.InstanceId+"/"+day.Text;if(day.Options!=null)foreach(EventOptionDefinition option in day.Options)key+="/"+(option==null?"null":option.Id+":"+option.Text);}
+            else if(tutorialOpen)key=flow.RunId+"/tutorial/"+tutorial;
+            if(key==modalKey&&overlay!=null){blocked=true;return;}
+            ReleaseContainer(overlay);overlay=null;blocked=false;modalButtons.Clear();modalFeedback=null;modalKey=key;
+            if(key==null)return;
             if (flow.Phase == GamePhase.DayEvent) {
-                DayEventSnapshot day = services.DayEvents.GetSnapshot(); if (day == null || day.State == null || day.State.Resolved) return;
-                Modal("今日事件", day.Text); int i = 0;
-                if (day.Options != null) foreach (EventOptionDefinition option in day.Options) { string id = option.Id, instance = day.State.InstanceId; Button(overlay, option.Text, 260, 345 + i++ * 54, 760, 46, delegate { Result(services.DayEvents.TryChoose(Command(), instance, id)); }); }
-            } else if (flow.Phase == GamePhase.Build && !flow.TutorialShown && !String.IsNullOrEmpty(services.Catalog.GetSettings().TutorialText)) {
-                Modal("守护指南", services.Catalog.GetSettings().TutorialText); Button(overlay, "开始部署", 490, 530, 300, 48, delegate { Result(services.Flow.TryDismissTutorial(Command())); });
+                DayEventPanelReferences prefab=ui!=null?ui.DayEventPanelPrefab:null;
+                if(prefab!=null){string error;if(!prefab.Validate(out error)){InvalidModal(error);return;}
+                    DayEventPanelReferences instance=Instantiate(prefab,ModalMount,false);overlay=instance.transform;ActivateModal();
+                    instance.TitleText.text="第 "+day.State.DayIndex+" 天 · 今日事件";instance.BodyText.text=day.Text;
+                    if(day.Options!=null)foreach(EventOptionDefinition option in day.Options){if(option==null)continue;string id=option.Id,eventId=day.State.InstanceId;
+                        Button button=Instantiate(instance.OptionButtonTemplate,instance.OptionsRoot,false);button.name="Option_"+id;
+                        button.GetComponentInChildren<Text>(true).text=option.Text;button.gameObject.SetActive(true);modalButtons.Add(button);
+                        BindButton(button,delegate { SubmitModal(delegate {return services.DayEvents.TryChoose(Command(),eventId,id);}); });}
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(instance.OptionsRoot);instance.BodyScroll.verticalNormalizedPosition=1;
+                } else {
+                    Modal("第 "+day.State.DayIndex+" 天 · 今日事件",day.Text);
+                    RectTransform root=CreateModalScroll("Options",345,250);float y=0;
+                    if(day.Options!=null)foreach(EventOptionDefinition option in day.Options){if(option==null)continue;string id=option.Id,eventId=day.State.InstanceId;
+                        Button button=Button(root,option.Text,0,y,740,50,delegate {SubmitModal(delegate {return services.DayEvents.TryChoose(Command(),eventId,id);});});
+                        Text label=button.GetComponentInChildren<Text>();float height=Mathf.Max(50,label.preferredHeight+12);
+                        ((RectTransform)button.transform).sizeDelta=new Vector2(740,height);label.rectTransform.sizeDelta=new Vector2(730,height);
+                        modalButtons.Add(button);y+=height+8;}
+                    root.sizeDelta=new Vector2(760,Mathf.Max(250,y));
+                }
+            } else if(tutorialOpen) {
+                TutorialPanelReferences prefab=ui!=null?ui.TutorialPanelPrefab:null;
+                if(prefab!=null){string error;if(!prefab.Validate(out error)){InvalidModal(error);return;}
+                    TutorialPanelReferences instance=Instantiate(prefab,ModalMount,false);overlay=instance.transform;ActivateModal();
+                    instance.TitleText.text="守护指南";instance.BodyText.text=tutorial;modalButtons.Add(instance.ConfirmButton);
+                    BindButton(instance.ConfirmButton,delegate {SubmitModal(delegate {return services.Flow.TryDismissTutorial(Command());});});
+                }else{Modal("守护指南",tutorial);modalButtons.Add(Button(overlay,"开始部署",490,550,300,48,delegate {SubmitModal(delegate {return services.Flow.TryDismissTutorial(Command());});}));}
             }
+            modalFeedback=Label(overlay,"",260,650,760,30,17);
+            if(eventOpen&&modalButtons.Count==0){note.text="事件没有可用选项，请检查事件配置。";modalFeedback.text=note.text;Debug.LogError(note.text,this);}
+            else if(modalPending!=Guid.Empty)modalFeedback.text="正在处理…";
+            SetModalInteractable(modalPending==Guid.Empty&&!modalSubmitting);
+        }
+        private void SubmitModal(Func<OperationResult> command)
+        {
+            if(services==null||modalSubmitting||modalPending!=Guid.Empty)return;
+            modalSubmitting=true;SetModalInteractable(false);
+            try{OperationResult result=command();if(result.State==OperationState.Queued)modalPending=result.CommandId;Result(result);}
+            finally{modalSubmitting=false;SetModalInteractable(modalPending==Guid.Empty);}
+        }
+        private void SetModalInteractable(bool enabled)
+        {foreach(Button button in modalButtons)if(button!=null)button.interactable=enabled;}
+        private void ActivateModal()
+        {overlay.gameObject.SetActive(true);overlay.SetAsLastSibling();if(ui!=null)ui.ModalRoot.SetAsLastSibling();blocked=true;}
+        private void InvalidModal(string error)
+        {
+            Debug.LogError("正式弹窗引用无效："+error,this);Modal("弹窗配置错误",error);note.text="正式弹窗引用无效："+error;
+        }
+        private RectTransform CreateModalScroll(string name,float y,float height)
+        {
+            RectTransform viewport=Rect(overlay,name,260,y,760,height);Image(viewport,new Color(0,0,0,0.01f));viewport.gameObject.AddComponent<RectMask2D>();
+            RectTransform content=Rect(viewport,"Content",0,0,760,height);ScrollRect scroll=viewport.gameObject.AddComponent<ScrollRect>();
+            scroll.viewport=viewport;scroll.content=content;scroll.horizontal=false;scroll.movementType=ScrollRect.MovementType.Clamped;return content;
         }
         private void Modal(string caption, string body)
         {
             ReleaseContainer(overlay);
             overlay = Rect(ModalMount, "Modal", 0, 0, 1280, 720); Image(overlay, new Color(0.02f,0.04f,0.08f,0.88f)); overlay.SetAsLastSibling();if(ui!=null)ui.ModalRoot.SetAsLastSibling(); blocked = true;
             Image(Rect(overlay, "Card", 220, 135, 840, 480), new Color(0.13f,0.19f,0.28f)); Label(overlay, caption, 260, 165, 760, 48, 30);
-            Text text = Label(overlay, body, 260, 225, 760, 106, 21); text.alignment = TextAnchor.UpperLeft;
+            RectTransform content=CreateModalScroll("BodyScroll",225,106);
+            Text text=Label(content,body,0,0,740,106,21);text.alignment=TextAnchor.UpperLeft;
+            text.verticalOverflow=VerticalWrapMode.Overflow;float height=Mathf.Max(106,text.preferredHeight);text.rectTransform.sizeDelta=new Vector2(740,height);content.sizeDelta=new Vector2(760,height);
         }
         private void BuildWidgets()
         {
@@ -302,4 +370,3 @@ namespace Spotlight.Presentation
         private Button Button(Transform parent,string text,float x,float y,float w,float h,Action action) { RectTransform r=Rect(parent,text,x,y,w,h);Image(r,new Color(0.21f,0.34f,0.46f));Button b=r.gameObject.AddComponent<Button>();Text l=Label(r,text,5,0,w-10,h,17);l.alignment=TextAnchor.MiddleCenter;BindButton(b,action);return b; }
     }
 }
-

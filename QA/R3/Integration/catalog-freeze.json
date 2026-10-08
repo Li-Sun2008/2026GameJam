@@ -1,0 +1,396 @@
+{
+  "baseCommit": "ae1e61b",
+  "configVersion": "prototype.1",
+  "capturedUtc": "2026-10-08T06:45:20.3639211Z",
+  "source": "unchanged integrated catalog assets",
+  "assets": [
+    {
+      "path": "Assets/_Game/Data/Prototype/P1/GameConfig.asset",
+      "sha256": "27ba0c4bb3b62d6d570ad713d8e9d786bb252ad555b4f3b9036851a00f2ce67e"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P1/Gold.asset",
+      "sha256": "2c24c3d706aff7df8f4abef0735d1ffbefe78cc9ed019d7a012f1fce30d7a83e"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P1/LevelPrototype.asset",
+      "sha256": "4f8ad3b2df9dd9c59f6780a0cd867937288b6ae4a5f067eef9860403fec43ebd"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P1/PrototypeCatalog.asset",
+      "sha256": "6194a8e6781d19d860866237dc479d5fb07297156825972d47c37a78c387ae22"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Element_earth.asset",
+      "sha256": "5068f64848a82c582e3e3faf1c8f82bcbf06b46a23608f5fa6bef513a8bbeb9c"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Element_fire.asset",
+      "sha256": "0a5f7131de2f4eb02591deaf7a7c3615fc3568dc62e8618ffefac179bb9cfcdc"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Element_thunder.asset",
+      "sha256": "90f7dd9fc45e6a2f4fb3d0422dc1ef2dc5253cfa305414d21eacf3e76b44b960"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Element_water.asset",
+      "sha256": "9930ba9aad7150302f9f421e97c69516e8ec62a04487f28c1119ac46b8178731"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Element_wind.asset",
+      "sha256": "68cac9180d8688ed97792fd1e0bce4838ffb833b6b6455ef1950b45487962fd0"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Element_wood.asset",
+      "sha256": "617055816b1edf9954e2527e6fffc2a5bc369618194be6d88ee75f52a8dfa7d7"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Production_earth.asset",
+      "sha256": "c27574ef276a44243a272ac5c6139ae82105f977359a35a014ff8d41d768c4e5"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Production_fire.asset",
+      "sha256": "8b4b8901f24311dc1aae652d296670a1791e4b62d17daa104d57eb9a3d334b58"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Production_thunder.asset",
+      "sha256": "16ecf6fc3d2a669da2e229733afa1e6997d1d968da33c2758f7744c29dc3cdb1"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Production_water.asset",
+      "sha256": "0c010e44b49e5e39a553109ea0a8e56756f61e155e4b4fdbe48a4b54c50f4fe0"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Production_wind.asset",
+      "sha256": "e73b71897ea06182b52dd7914b2362e5e69bdfc2168c488a959ee253985e5dd1"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Production_wood.asset",
+      "sha256": "b48dbe3d0b82538f676103fd6874a1f066cabae65c58763eb2f8c1f0b0af12c4"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Earth_Earth.asset",
+      "sha256": "631a89f7bc2a7060ae90bc3a70a7e890ddec583155573609d38a40273f878d32"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Earth_Thunder.asset",
+      "sha256": "76b8a8262c207ab4e4045f1d7a27209450b8835e4075b8acc2bbbe5df8afddd7"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Earth_Wind.asset",
+      "sha256": "e214999d7209736b508a0940fbac5222bec206fc6bcf33097d7efdb991f77686"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Earth_Wood.asset",
+      "sha256": "582b7c90ccb718e292304b2975ec45ff0a2ab7959c272f248ba7365a2c78573b"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Fire_Earth.asset",
+      "sha256": "2295f4d0ab175d89083d011befbfaf8a3c95f41536e16c2da30001c8e20dd067"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Fire_Fire.asset",
+      "sha256": "f8375b78d23d4e4375f1a96cd26d81cc1e6e167682efc5ec750c0445eb244cba"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Fire_Thunder.asset",
+      "sha256": "0e1ac01ff8b1aaf77c6f891d6640cf6e681e20b76168b347cc5181491502cd3b"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Fire_Wind.asset",
+      "sha256": "b2094b9a88a7363d64c77022a03696348ada8ac2fa75d46bfad5e00b16bfabd7"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Fire_Wood.asset",
+      "sha256": "eb1c144f62f76b933340a7a0107cd4edaf04c986f27720148a44e7d6fe75a282"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Thunder_Thunder.asset",
+      "sha256": "139fd5a6ea54c9769716484cdbd300d7207de96618becdc6cd37373779e6adbc"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Water_Earth.asset",
+      "sha256": "6affb751992259b09e88ddadffc040bf65018e9ef13e8ab758d143174b1b3f19"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Water_Fire.asset",
+      "sha256": "fbdab22aa3c46907db5d144071f8926f1ed84587c336e689b9ca1d7a1e9831da"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Water_Thunder.asset",
+      "sha256": "bab24222692fa30202872e708a165a7044384931b915cef69238bab837edaa64"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Water_Water.asset",
+      "sha256": "99fe379fa7c7e7bbcb7b27a894f9ee034fade7da9ab0350df871309dd400c0da"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Water_Wind.asset",
+      "sha256": "2174c73372dd04f328cc6033a2abbf902ee53d064dacbf8b74d39766f9ac5b7d"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Water_Wood.asset",
+      "sha256": "fd41d701754c064e8916e1d27e024c0b5c8a932f2788c7c53b359035dd863e58"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Wind_Thunder.asset",
+      "sha256": "2e3fc86619d75ed90757275700a70675b461dcb07462be736d8d4468fb39d7e6"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Wind_Wind.asset",
+      "sha256": "729823d8c6eefc184a4b9b8c66ad9664a7685479b8edd7483dedd72335574329"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Wood_Thunder.asset",
+      "sha256": "9b12308460145ec76bbca248544d882c06c50de3887653e01a55e78ba4e3930d"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Wood_Wind.asset",
+      "sha256": "99fbbbc18fa7ed8d27f331ce14d4ccf918d99378442ddd3cd821f6eed555c5a7"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Wood_Wood.asset",
+      "sha256": "e7664b3166bcb9444b263b5046b51039129270a74792857c8caa8171b63d9c80"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Earth_Earth.asset",
+      "sha256": "9da1736bf21e0284908dbea6be6cd02db01580814faee0af9bb3a57ccdd2921f"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Earth_Thunder.asset",
+      "sha256": "7808cde3b19bc3be55fba837286f2f0030b5c753aef4f4c0aff4b8406c839929"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Earth_Wind.asset",
+      "sha256": "918d60c22df0e008ba75938bc79a3fce416d22196a0a2e7d4903ab483a3bbbec"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Earth_Wood.asset",
+      "sha256": "75d72f3dfca32e8814f1dbb381362e4bf237dc1964739b683639191a8f8ee331"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Fire_Earth.asset",
+      "sha256": "f7a0001ccf2ed55b033b0d2d4f02d8b1591e7a5f5697d71c28f25ca54bc42542"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Fire_Fire.asset",
+      "sha256": "e9a4717028e998a1741cd6370cff63ea1b3ddd5a7ecb826505e4454286065c7a"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Fire_Thunder.asset",
+      "sha256": "bfb7496f29f7944a39cb73e21273cfebdfefd111e77e990e856ca52030093094"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Fire_Wind.asset",
+      "sha256": "4f8de6df5d2912ebfa712d001b8bcea39b5e49ba99100359fd085c60906dfc35"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Fire_Wood.asset",
+      "sha256": "de7a4f494fbf653950c36c86297139e612b0136ed26eb8e4d920101bcacafc43"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Thunder_Thunder.asset",
+      "sha256": "899f674ea4f6668ec19db8d636a3b83a94f2e8360dcd67796ccc07ce31afbdf8"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Water_Earth.asset",
+      "sha256": "22fbc139cfd6205d0268c6269251feecee4f808b7272e64c7c2bfdaece558d82"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Water_Fire.asset",
+      "sha256": "673df4bda17d6f3ac4dc9e3dfd3bc1888a3c58fc770a9c1889274c638ff79ca5"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Water_Thunder.asset",
+      "sha256": "d25e282afaa09be447b1bf6765b3b6c994239f9c30099e4dc1b9a3fd9ee5f183"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Water_Water.asset",
+      "sha256": "db04450c59812e8ee47454ae051ece1060f9b1fc2c280a3e5c0fd7ddefe4cf8b"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Water_Wind.asset",
+      "sha256": "26c46668b75a14e755c45660281bf86c6189b1aa715291d1ce6a70464716e6d8"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Water_Wood.asset",
+      "sha256": "8baef723230ef9a80950a3b3623bd259d32bcd28358a366f93a5d9a31a60225f"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Wind_Thunder.asset",
+      "sha256": "1ac751a0106d8299a88d4f761730bcc17474e3fa7fa686ce2a827d49bf9778ed"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Wind_Wind.asset",
+      "sha256": "1f04568b7c333d49bd858e3040bc726128bfcec0d9267258de95815078fb1c36"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Wood_Thunder.asset",
+      "sha256": "cc4bf4f19ed02fae2c403699b67b2c87ce669f2bf4f2f510600680e815655aaa"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Wood_Wind.asset",
+      "sha256": "10855600325cee9ae3c3747db101c2de5dafc6544280d7653ce5f465648ec64c"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P2/Reaction_Projectile_Wood_Wood.asset",
+      "sha256": "bc27cf82a54abf9c8229273abefcc77a77b45f13f3cea0dccc6b1246cc695e51"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/Gauge_earth.asset",
+      "sha256": "1bf543cbad4656bf1f37d6b84c6e3ead462c67a9cfa75fd9214cbc8e23087d9c"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/Gauge_fire.asset",
+      "sha256": "3873caf471af64f746aa85cd99e4a38360dff40fb6887252007cc5c36e9938dc"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/Gauge_thunder.asset",
+      "sha256": "d8405427d7508add0608b4e166777d70908054d0809b4238a467cd0534e258ae"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/Gauge_water.asset",
+      "sha256": "5bc5baa5541c697c88dcc1f3191163e2591622a54b8f52e9ded47d28dc219fdd"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/Gauge_wind.asset",
+      "sha256": "954844a93e24043c6800c16df37ce4f456851ced04fb16db2f38382f26ccbe8f"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/Gauge_wood.asset",
+      "sha256": "79b616f87787cca5c8e00b41ff447eb7dfb421bcd9c8e59138c9860b7df535d0"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/ProjectileBasic.asset",
+      "sha256": "7a4c1980134dc3c77685dcde0f12edd3d40db553c8b620d0affe5398402d4456"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/ProjectileEnemy.asset",
+      "sha256": "847af53a0aa204cc613dd67dd4094e87ebc5e9b553c18c6a78abe0663b928bfe"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/SpotlightSkill.asset",
+      "sha256": "662c12aa29f9ac70299a98159d45f960995cbb5ee065e1977aa892c467adf694"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/Status_earth.asset",
+      "sha256": "0a6a5f16775d22625517846c1fbc3f82796deb959474506c5929a00034647bdc"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/Status_Entangle.asset",
+      "sha256": "7881593d5e44d7dc69f62661506286ff26230fd4e9cbf71debd6c26f6b1906a5"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/Status_fire.asset",
+      "sha256": "5a788d17334d3166495ab0ec5fd2935b7c25963d0a5a1a1724e23f78faf106af"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/Status_thunder.asset",
+      "sha256": "9983451fca5702974fdb923511d2b080d9e942f23533cce182fe64cb40f93061"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/Status_ThunderBurn.asset",
+      "sha256": "f8d5271c0f4acb1b67de8b4ced465cf3b5b48fb3178c2c561ef93aa16dec926a"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/Status_ThunderStorm.asset",
+      "sha256": "10ef88822f2ccde0ae89c1b67f63cd35837ea371676d02640c50cc5271850c5c"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/Status_water.asset",
+      "sha256": "5044ba22f34d7c6b963ffe8d634b7203520686ee5628826418a418e27726dd37"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/Status_wind.asset",
+      "sha256": "9faf7beaedd3758dfbfd7735eb8288671d705c4a664df06f381815d2c5b336bb"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/Status_wood.asset",
+      "sha256": "4853b7a7824f8275f1580402c8b1de520bb8b4e05b607d0f0cf9ef619a60355a"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P3/TowerBasic.asset",
+      "sha256": "e01fcba9412c080913e0d3b800971ed4690cbf19c6116767ff4eda9a91e4a09e"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/BossCurse.asset",
+      "sha256": "4de2cdd0f11c129ffde2df716d16ed70c148a368871f0b76a197c328f8f98f55"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/BossShot.asset",
+      "sha256": "36d936176791b6d57174cd80deda477cf5f5b8c42a8dfbae3187fc4b596c9426"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/BossSummon.asset",
+      "sha256": "770e0a0c4e5e66b9daa9c9b792dc5fde9356de1fc428eed7902b7169a28e7c19"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/EndlessConfig.asset",
+      "sha256": "8c15b23a2c7877f019d939b3b13ca6f4a9d0f47358ff22b2902549cf8d1e7c9b"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/EndlessWaveTemplate.asset",
+      "sha256": "a433affd2ea667106908b0d82e0e0f8ca01f5f1b2adaeee7e4ff16081bb55ffb"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/GoblinMelee.asset",
+      "sha256": "40b553ee0d57330174d3e39be0a4261dcf98f5f03e69003d407f63beca1a0413"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/GoblinRanged.asset",
+      "sha256": "0911ef75d24f5dcc9b30cee371828566f9dfd3dab3763a20aec4b2369ee934cc"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/GoldDrop.asset",
+      "sha256": "4f75c89a17ed04089913579a60d2c11cb6fa84ec3a972c23844191e4cf525b90"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/SoulKing.asset",
+      "sha256": "20928fc717a9a3ab11c3b0d491df75da47d1c059c9d3a2293fc8b02469372ab6"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/StoryNight1.asset",
+      "sha256": "ec12cdf257bcb0b1fdce5b485319dbe899c12ccc8a5049cb7b09ee5e209a722d"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/StoryNight2.asset",
+      "sha256": "afc23f40281a74d01d48cb23dbfbd115d3cdc345e8bdf2a98e23002380658a12"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/StoryNight3.asset",
+      "sha256": "864fd2fab1f4b63522aa5b9ad8364ae4aba782509e275ea2eddcc04f177ca8d6"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/StoryNight4.asset",
+      "sha256": "e0c82b0dfa81521128c30d9d338444acfe470d074ea80b340d7a81ec193994a7"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/StoryNight5.asset",
+      "sha256": "8f99b285db57c25acddf6f336748e6d90465acba20d6b5f54c1d187777aa67e5"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/StoryNight6.asset",
+      "sha256": "0d117f2da1fb97b4c4cd639c2d9f5880adb3a1ca46ce00a3553c78f7644ccbbd"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/StoryNight7.asset",
+      "sha256": "54f7d2f21f43b493ddb2235d2daf899e26de500e942097bc7ae490001937f9f0"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P4/WraithDeferred.asset",
+      "sha256": "ff300624910b8cb84a545d3ebfa6fb074e824c41e56f906dcce73ba9f9e537d0"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P5/HealItem.asset",
+      "sha256": "0015ab788dea69b0ea05f1bfacaf33d05bd8adb35c4cd85dd82011f9b36c52b6"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P5/QuietMorning.asset",
+      "sha256": "0243128b362f318201ea0f5f457ddf027eb7524f16692690de0e8586013b6ef8"
+    },
+    {
+      "path": "Assets/_Game/Data/Prototype/P5/TowerStackItem.asset",
+      "sha256": "ffe7cd7de68a1b29ddcd1e2ddde22d761418f9fc67f8c5e62e3eb35e79bcfd47"
+    }
+  ]
+}

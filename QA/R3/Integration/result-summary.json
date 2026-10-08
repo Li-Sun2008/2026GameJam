@@ -1,0 +1,30 @@
+{
+  "baseCommit": "ae1e61b",
+  "workingTreeCommitted": false,
+  "capturedUtc": "2026-10-08T06:49:09.5979214Z",
+  "unityVersion": "2022.3.33f1c1",
+  "configVersion": "prototype.1",
+  "nativeNoGraphicsTests": 69,
+  "nativeGraphicsTests": 2,
+  "failed": 0,
+  "buildSucceeded": true,
+  "buildWarnings": 1,
+  "buildErrors": 0,
+  "buildWarningExplanation": "Headless build cannot update ambient/reflection probes; separate rendered Bootstrap/HUD tests passed.",
+  "originalBuildOutput": "E:\\PersonalProgram\\2026GameJam\\Docs\\Verification\\R3-integrated-20261008\\Builds\\Windows\\Spotlight.exe",
+  "copiedPlayableOutput": "Builds/Windows/Spotlight.exe",
+  "playerSmokeSucceeded": true,
+  "observedBirthsPerNight": [
+    {
+      "day": 1,
+      "born": 4
+    },
+    {
+      "day": 2,
+      "born": 6
+    }
+  ],
+  "cumulativeBirthsAfterNight2": 10,
+  "executableSha256": "922529e537e35ec52aac25e035d395826377d5a5557d5777816f8f9c741bbd3b",
+  "note": "Only first two nights on the current prototype configuration are validated as balance demonstration; seven-night branch regressions are not unmodified-balance proof."
+}

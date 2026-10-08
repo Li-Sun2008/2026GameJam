@@ -30,9 +30,12 @@ namespace Spotlight.Bootstrap
             try
             {
                 if (CatalogAsset == null) throw new InvalidOperationException("缺少 PrototypeCatalog。请执行菜单「聚光灯/生成2D主程工程」，然后打开 00_Bootstrap 场景。");
+                string smokeDirectory = StandaloneSmokeRunner.PrepareIsolatedSaveDirectory();
+                if (smokeDirectory != null) SaveDirectoryOverride = smokeDirectory;
                 string saveDirectory = string.IsNullOrEmpty(SaveDirectoryOverride) ? Path.Combine(Application.persistentDataPath, "Spotlight") : SaveDirectoryOverride;
                 Services = new ModuleComposition(CatalogAsset.BuildCatalogData(), saveDirectory);
                 Services.Events.OnListenerError = Debug.LogException;
+                if (RuntimeQaRecorder.Requested) gameObject.AddComponent<RuntimeQaRecorder>().Bind(Services);
                 if (WorldCamera == null) WorldCamera = Camera.main;
                 if (WorldCamera == null)
                 {
@@ -86,6 +89,7 @@ namespace Spotlight.Bootstrap
 
         private void OnApplicationFocus(bool focused)
         {
+            if (RuntimeQaRecorder.HasArgument("-spotlightSmoke")) return;
             if (Services == null) return;
             if (!focused && focusPause == Guid.Empty) focusPause = Services.Clock.AcquirePause(PauseReason.FocusLost);
             if (focused && focusPause != Guid.Empty)

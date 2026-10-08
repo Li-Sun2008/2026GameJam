@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-08 06:37:54Z" end-time="2026-10-08 06:37:56Z" duration="2.2582618">
+  <test-suite type="TestSuite" id="1000" name="2026GameJam" fullname="2026GameJam" runstate="Runnable" testcasecount="69" result="Passed" start-time="2026-10-08 06:37:54Z" end-time="2026-10-08 06:37:56Z" duration="2.258262" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties />
+    <test-suite type="Assembly" id="1100" name="Spotlight.Integration.Tests.dll" fullname="E:/PersonalProgram/2026GameJam/Docs/Verification/R3-integrated-20261008/Library/ScriptAssemblies/Spotlight.Integration.Tests.dll" runstate="Runnable" testcasecount="48" result="Passed" start-time="2026-10-08 06:37:55Z" end-time="2026-10-08 06:37:56Z" duration="0.909424" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="32576" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+      </properties>
+      <test-suite type="TestSuite" id="1101" name="Spotlight" fullname="Spotlight" runstate="Runnable" testcasecount="48" result="Passed" start-time="2026-10-08 06:37:55Z" end-time="2026-10-08 06:37:56Z" duration="0.902028" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1102" name="Tests" fullname="Spotlight.Tests" runstate="Runnable" testcasecount="48" result="Passed" start-time="2026-10-08 06:37:55Z" end-time="2026-10-08 06:37:56Z" duration="0.888277" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1103" name="Integration" fullname="Spotlight.Tests.Integration" runstate="Runnable" testcasecount="43" result="Passed" start-time="2026-10-08 06:37:55Z" end-time="2026-10-08 06:37:56Z" duration="0.884017" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1066" name="FormalUiBootstrapTests" fullname="Spotlight.Tests.Integration.FormalUiBootstrapTests" classname="Spotlight.Tests.Integration.FormalUiBootstrapTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-08 06:37:55Z" end-time="2026-10-08 06:37:55Z" duration="0.007163" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1067" name="BootstrapUsesFormalPrefabAndRendersRealDeploymentHud" fullname="Spotlight.Tests.Integration.FormalUiBootstrapTests.BootstrapUsesFormalPrefabAndRendersRealDeploymentHud" methodname="BootstrapUsesFormalPrefabAndRendersRealDeploymentHud" classname="Spotlight.Tests.Integration.FormalUiBootstrapTests" runstate="Runnable" seed="1438690102" result="Passed" start-time="2026-10-08 06:37:44Z" end-time="2026-10-08 06:37:51Z" duration="7.382726" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1068" name="PBootstrapSmokeTests" fullname="Spotlight.Tests.Integration.PBootstrapSmokeTests" classname="Spotlight.Tests.Integration.PBootstrapSmokeTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-08 06:37:55Z" end-time="2026-10-08 06:37:56Z" duration="0.865203" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1069" name="NativeAwakeBuildsUiSpritesAndCapturesPreview" fullname="Spotlight.Tests.Integration.PBootstrapSmokeTests.NativeAwakeBuildsUiSpritesAndCapturesPreview" methodname="NativeAwakeBuildsUiSpritesAndCapturesPreview" classname="Spotlight.Tests.Integration.PBootstrapSmokeTests" runstate="Runnable" seed="604889047" result="Passed" start-time="2026-10-08 06:37:51Z" end-time="2026-10-08 06:37:56Z" duration="5.292091" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

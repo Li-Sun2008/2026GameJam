@@ -7,6 +7,8 @@ namespace Spotlight.Presentation
     public sealed class GameUiReferences : MonoBehaviour
     {
         public Canvas Canvas;
+        public TutorialPanelReferences TutorialPanelPrefab;
+        public DayEventPanelReferences DayEventPanelPrefab;
         public Text TitleText, SpringHpText, WaveText, SkillText, GoldText, HintText, SelectionText;
         public Text[] HandTexts = new Text[6];
         public Text[] ItemTexts = new Text[2];
