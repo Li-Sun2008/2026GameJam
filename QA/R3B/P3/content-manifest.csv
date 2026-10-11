@@ -1,9 +1,12 @@
 Owner,TaskId,AssetPath,AssetType,DefinitionId,PrefabKey,DependsOn,RegistrationStatus
-P3,R3B-T01,Assets/_Game/Data/Prototype/P3/Status_ContactBurn.asset,StatusEffectDefinitionSO,status.contact.burn,N/A,N/A,Î´µÇ¼Ç
-P3,R3B-T01,Assets/_Game/Data/Prototype/P3/Status_ContactWaterSlow.asset,StatusEffectDefinitionSO,status.contact.water_slow,N/A,N/A,Î´µÇ¼Ç
-P3,R3B-T01,Assets/_Game/Data/Prototype/P2/Element_fire.asset,ElementDefinition,elm.fire,N/A,status.contact.burn,ÒÑ´æÔÚ-±¾´ÎĞŞ¸Ä
-P3,R3B-T01,Assets/_Game/Data/Prototype/P2/Element_water.asset,ElementDefinition,elm.water,N/A,status.contact.water_slow,ÒÑ´æÔÚ-±¾´ÎĞŞ¸Ä
+P3,R3B-T01,Assets/_Game/Data/Prototype/P3/Status_ContactBurn.asset,StatusEffectDefinitionSO,status.contact.burn,N/A,N/A,æœªç™»è®°
+P3,R3B-T01,Assets/_Game/Data/Prototype/P3/Status_ContactWaterSlow.asset,StatusEffectDefinitionSO,status.contact.water_slow,N/A,N/A,æœªç™»è®°
+P3,R3B-T01,Assets/_Game/Data/Prototype/P2/Element_fire.asset,ElementDefinition,elm.fire,N/A,status.contact.burn,å·²å­˜åœ¨-æœ¬æ¬¡ä¿®æ”¹
+P3,R3B-T01,Assets/_Game/Data/Prototype/P2/Element_water.asset,ElementDefinition,elm.water,N/A,status.contact.water_slow,å·²å­˜åœ¨-æœ¬æ¬¡ä¿®æ”¹
 
 Owner,TaskId,AssetPath,AssetType,DefinitionId,PrefabKey,DependsOn,RegistrationStatus
-P3,R3B-T02,Assets/_Game/Data/Prototype/P3/Status_ColdWave.asset,StatusEffectDefinitionSO,status.reaction.cold_wave,N/A,N/A,Î´µÇ¼Ç
-P3,R3B-T02,Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Water_Water.asset,ReactionDefinition,reaction.enemy_status.water_water,N/A,status.reaction.cold_wave,ÒÑ´æÔÚ-±¾´ÎĞŞ¸Ä
+P3,R3B-T02,Assets/_Game/Data/Prototype/P3/Status_ColdWave.asset,StatusEffectDefinitionSO,status.reaction.cold_wave,N/A,N/A,æœªç™»è®°
+P3,R3B-T02,Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Water_Water.asset,ReactionDefinition,reaction.enemy_status.water_water,N/A,status.reaction.cold_wave,å·²å­˜åœ¨-æœ¬æ¬¡ä¿®æ”¹
+P3,R3B-T02,Assets/_Game/Data/Prototype/P2/Reaction_EnemyStatus_Water_Water.asset,ReactionDefinition,reaction.enemy_status.water_water,N/A,status.reaction.cold_wave,å·²å­˜åœ¨-æœ¬æ¬¡ä¿®æ”¹
+
+P3,R3B-T03,Assets/_Game/Scripts/Presentation/Combat/HitFlashVisual2D.cs,C# Script,N/A,N/A,N/A,åˆ¶ä½œå®Œæˆ
