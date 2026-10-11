@@ -35,6 +35,7 @@ namespace Spotlight.Presentation
         private GamePhase renderedPhase = (GamePhase)(-1);
         private GameUiReferences ui;
         private GameObject generatedUi;
+        private string summaryRunId, productionSummary;
         private sealed class ButtonBinding { internal Button Button; internal Button.ButtonClickedEvent Event; internal UnityAction Listener; }
         private readonly List<ButtonBinding> buttonBindings = new List<ButtonBinding>();
         private string modalKey;
@@ -43,6 +44,10 @@ namespace Spotlight.Presentation
         private bool modalSubmitting;
         private readonly List<Button> modalButtons = new List<Button>();
         private Text modalFeedback;
+        private Guid resultPending;
+        private bool resultSubmitting;
+        private Text resultFeedback;
+        private readonly List<Button> resultButtons = new List<Button>();
 
         public void Bind(GameViewContext context)
         {
@@ -52,8 +57,9 @@ namespace Spotlight.Presentation
             {
             BuildUi();
             subscriptions.Add(context.Events.Subscribe<CommandFinishedEvent>(delegate(CommandFinishedEvent e) {
+                if(e.Result.CommandId==resultPending){resultPending=Guid.Empty;SetResultInteractable(true);}
                 if(e.Result.CommandId==modalPending){modalPending=Guid.Empty;SetModalInteractable(true);}
-                if (pending.Remove(e.Result.CommandId)) Result(e.Result);
+                if (pending.Remove(e.Result.CommandId)) {Result(e.Result);RefreshAll();}
             }));
             subscriptions.Add(context.Events.Subscribe<PhaseChangedEvent>(delegate(PhaseChangedEvent e) { CancelSelection(); ReleasePlayerPause(); RefreshAll(); }));
             subscriptions.Add(context.Events.Subscribe<BoardChangedEvent>(delegate(BoardChangedEvent e) { RefreshAll(); }));
@@ -63,6 +69,10 @@ namespace Spotlight.Presentation
             subscriptions.Add(context.Events.Subscribe<SkillChangedEvent>(delegate(SkillChangedEvent e) { RefreshStatus(); }));
             subscriptions.Add(context.Events.Subscribe<DayEventChangedEvent>(delegate(DayEventChangedEvent e) { RefreshAll(); }));
             subscriptions.Add(context.Events.Subscribe<ClockChangedEvent>(delegate(ClockChangedEvent e) { RefreshStatus(); }));
+            subscriptions.Add(context.Events.Subscribe<DawnSettledEvent>(delegate(DawnSettledEvent e) {
+                summaryRunId=services.Flow.GetSnapshot().RunId;
+                productionSummary=ProductionSummaryFormatter.Format(e.Rewards);RefreshStatus();
+            }));
             RefreshAll();
             }
             catch { Unbind(); throw; }
@@ -79,17 +89,20 @@ namespace Spotlight.Presentation
             title=health=wave=skill=gold=note=selection=null;
             Array.Clear(hands,0,hands.Length);Array.Clear(items,0,items.Length);
             selected=false;blocked=false;cell=new CellCoord();statusRefreshTimer=0;
+            summaryRunId=null;productionSummary=null;
             renderedPhase = (GamePhase)(-1);
             modalKey=null;modalRunId=null;modalPending=Guid.Empty;modalSubmitting=false;modalButtons.Clear();modalFeedback=null;
+            resultPending=Guid.Empty;resultSubmitting=false;resultFeedback=null;resultButtons.Clear();
         }
         private void Start() { if (PreviewOnly && services == null) TestWidgets(); }
         private void OnDestroy() { Unbind(); }
         private CommandContext Command() { return services.Commands.Create(services.Flow.GetSnapshot().Revision); }
         private void Result(OperationResult result)
         {
-            if (result.State == OperationState.Queued) { pending.Add(result.CommandId); note.text = "正在处理…";if(modalFeedback!=null)modalFeedback.text=note.text; }
+            if (result.State == OperationState.Queued) { pending.Add(result.CommandId); note.text = "正在处理…";if(modalFeedback!=null)modalFeedback.text=note.text;RefreshControlStates(); }
             else if (result.State == OperationState.Committed) { note.text = "完成"; RefreshAll(); }
             else {note.text = ErrorText(result.Error);if(modalFeedback!=null)modalFeedback.text=note.text;}
+            if(resultFeedback!=null&&result.State!=OperationState.Committed)resultFeedback.text=note.text;
         }
         private static string ErrorText(ErrorCode e)
         {
@@ -101,6 +114,11 @@ namespace Spotlight.Presentation
                 case ErrorCode.InvalidTarget: case ErrorCode.TargetDead: return "请选择有效目标";
                 case ErrorCode.SkillAlreadyUsed: return "本夜技能已使用";
                 case ErrorCode.SaveUnavailable: return "没有可继续的记录";
+                case ErrorCode.SaveCorrupt: return "存档损坏，无法继续";
+                case ErrorCode.SaveVersionUnsupported: return "存档版本不受支持，无法继续";
+                case ErrorCode.ConfigMismatch: return "存档与当前内容配置不匹配，无法继续";
+                case ErrorCode.SaveIoFailure: return "无法读取存档，请检查存档文件";
+                case ErrorCode.SaveBusy: return "存档正在读写，请稍后重试";
                 case ErrorCode.InvalidDefinition: return "此内容尚未配置";
                 case ErrorCode.EffectAlreadyActive: return "同类效果正在生效";
                 case ErrorCode.VersionConflict: return "状态已变化，请重试";
@@ -117,10 +135,29 @@ namespace Spotlight.Presentation
             GamePhase phase = services.Flow.GetSnapshot().Phase;
             if (renderedPhase != phase) { renderedPhase = phase; DrawActions(phase); }
             DrawModal();
+            RefreshControlStates();
+        }
+        private void RefreshControlStates()
+        {
+            if(ui==null||services==null)return;GamePhase phase=services.Flow.GetSnapshot().Phase;bool ready=pending.Count==0;
+            for(int i=0;i<ids.Length;i++){
+                ui.ElementButtons[i].interactable=ready&&phase==GamePhase.Build&&services.Resources.GetQuantity(ResourceBucket.Hand,ids[i])>0;
+                ColorBlock colors=ui.ElementButtons[i].colors;colors.normalColor=placing==ids[i]?new Color(0.65f,0.9f,1):Color.white;ui.ElementButtons[i].colors=colors;
+            }
+            for(int i=0;i<itemIds.Length;i++)ui.ItemButtons[i].interactable=ready&&(phase==GamePhase.Build||phase==GamePhase.Night)&&services.Resources.GetQuantity(ResourceBucket.Inventory,itemIds[i])>0;
+            ui.CancelSelectionButton.interactable=ready;ui.PauseButton.interactable=ready&&(phase==GamePhase.Build||phase==GamePhase.Night);ui.NormalSpeedButton.interactable=ready;ui.DoubleSpeedButton.interactable=ready;
+            foreach(ButtonBinding binding in buttonBindings)if(binding.Button!=null&&actions!=null&&binding.Button.transform.IsChildOf(actions)){
+                MainMenuPanelReferences menu=binding.Button.GetComponentInParent<MainMenuPanelReferences>();RunEndPanelReferences end=binding.Button.GetComponentInParent<RunEndPanelReferences>();
+                bool available=true;if((menu!=null&&binding.Button==menu.ContinueButton)||(end!=null&&binding.Button==end.RetryButton)){SaveReadResult save=services.Saves.ReadCheckpoint();available=save.Error==ErrorCode.None&&save.Data!=null;}
+                binding.Button.interactable=ready&&available;
+            }
         }
         private void RefreshStatus()
         {
             if (services == null || title == null) return; FlowSnapshot f = services.Flow.GetSnapshot();
+            if(summaryRunId!=f.RunId||f.Phase==GamePhase.Menu){summaryRunId=f.RunId;productionSummary=null;}
+            if(ui!=null&&ui.ProductionSummaryText!=null)
+                ui.ProductionSummaryText.text=f.Phase==GamePhase.Menu?"":productionSummary??"上夜生产：暂无记录";
             title.text = ui!=null&&ui.DayText!=null&&ui.PhaseText!=null?"聚光灯":"聚光灯 · 第 " + f.DayIndex + " 天 · " + PhaseName(f.Phase);
             ActorSnapshot spring; health.text = services.World.TryGetActor(services.World.SpringId, out spring) ? "灵泉 " + Mathf.CeilToInt(spring.CurrentHp) + " / " + Mathf.CeilToInt(spring.MaxHp) : "守护灵泉";
             WaveSnapshot w = services.Waves.GetSnapshot(); wave.text = "波次 " + w.WaveIndex + " · 敌人 " + w.AliveCount;
@@ -128,6 +165,8 @@ namespace Spotlight.Presentation
             gold.text = "金币 " + services.Resources.GetQuantity(ResourceBucket.Inventory, "res.gold");
             if(ui!=null)
             {
+                NightResultPanelReferences night=ui.ActionsRoot.GetComponentInChildren<NightResultPanelReferences>();if(night!=null)SetResultSummary(night.SummaryText);
+                RunEndPanelReferences end=ui.ActionsRoot.GetComponentInChildren<RunEndPanelReferences>();if(end!=null)SetResultSummary(end.SummaryText);
                 ClockSnapshot clock=services.Clock.GetSnapshot();
                 if(ui.DayText!=null)ui.DayText.text="第 "+f.DayIndex+" 天";
                 if(ui.PhaseText!=null)ui.PhaseText.text=PhaseName(f.Phase);
@@ -143,9 +182,25 @@ namespace Spotlight.Presentation
         private static string PhaseName(GamePhase p) { switch(p) { case GamePhase.Menu:return "开始旅程"; case GamePhase.Build:return "白天部署"; case GamePhase.Night:return "夜晚守护"; case GamePhase.DayEvent:return "今日事件"; case GamePhase.NightResult:return "守护成功"; case GamePhase.Ending:return "旅程完成"; case GamePhase.GameOver:return "灵泉失守"; default:return "迎接黎明"; } }
         private void DrawActions(GamePhase phase)
         {
+            resultButtons.Clear();resultFeedback=null;
             ReleaseContainer(actions); actions = Rect(ActionMount, "Actions", 0, 0, 1020, 720);
+            if(ui!=null)ui.ActionsRoot.SetSiblingIndex(ui.ModalRoot.GetSiblingIndex());
+            if(phase==GamePhase.NightResult||phase==GamePhase.GameOver||phase==GamePhase.Ending)((RectTransform)actions).sizeDelta=new Vector2(1280,720);
             int index = 0;
-            if (phase == GamePhase.Menu) { ActionButton("故事模式", index++, delegate { NewRun(GameMode.Story); }); ActionButton("无尽模式", index++, delegate { NewRun(GameMode.Endless); }); ActionButton("继续游戏", index++, Load); }
+            if (phase == GamePhase.Menu && ui!=null && ui.MainMenuPanelPrefab!=null)
+            {
+                string error;MainMenuPanelReferences prefab=ui.MainMenuPanelPrefab;
+                if(!prefab.Validate(out error))throw new InvalidOperationException(error);
+                MainMenuPanelReferences menu=Instantiate(prefab,actions,false);menu.gameObject.SetActive(true);
+                SaveReadResult checkpoint=services.Saves.ReadCheckpoint();
+                bool available=checkpoint.Error==ErrorCode.None&&checkpoint.Data!=null;
+                menu.ContinueButton.interactable=available;
+                menu.HintText.text=available?"选择故事或无尽模式，或继续上次旅程。":CheckpointHint(checkpoint);
+                BindButton(menu.StoryButton,delegate {NewRun(GameMode.Story);});
+                BindButton(menu.EndlessButton,delegate {NewRun(GameMode.Endless);});
+                BindButton(menu.ContinueButton,delegate {if(menu.ContinueButton.interactable)Load();});
+            }
+            else if (phase == GamePhase.Menu) { ActionButton("故事模式", index++, delegate { NewRun(GameMode.Story); }); ActionButton("无尽模式", index++, delegate { NewRun(GameMode.Endless); }); ActionButton("继续游戏", index++, Load); }
             if (phase == GamePhase.Build) {
                 ActionButton("开始这一夜", index++, delegate { Result(services.Flow.TryStartNight(Command())); });
                 ActionButton("保存进度", index++, delegate { Result(services.Saves.SaveCheckpoint(Command(), SaveReason.Manual)); });
@@ -155,13 +210,80 @@ namespace Spotlight.Presentation
                 ActionButton("返回菜单", index++, Menu);
             }
             if (phase == GamePhase.Night) { ActionButton("释放特殊技", index++, delegate { Result(services.Skill.TryUse(Command())); }); ActionButton("返回菜单", index++, Menu); }
-            if (phase == GamePhase.NightResult) {
+            if(phase==GamePhase.NightResult&&ui!=null&&ui.NightResultPanelPrefab!=null){DrawNightResult();}
+            else if (phase == GamePhase.NightResult) {
                 EndlessDefinition endless=services.Catalog.GetEndlessDefinition();bool milestone=services.Flow.GetSnapshot().Mode==GameMode.Endless&&endless!=null&&services.Flow.GetSnapshot().DayIndex==endless.MilestoneNight;
                 if(milestone){ActionButton("继续无尽挑战",index++,delegate {Result(services.Flow.TryContinueEndless(Command()));});note.text="已完成无尽里程碑！继续挑战可领取本次里程碑奖励。";}
                 else ActionButton("迎接下一天",index++,delegate {Result(services.Flow.TryConfirmNightResult(Command()));});
             }
-            if (phase == GamePhase.GameOver) { ActionButton("从记录重试", index++, Load); ActionButton("返回菜单", index++, Menu); }
-            if (phase == GamePhase.Ending) { ActionButton("返回菜单", index++, Menu); if (services.Flow.GetSnapshot().Mode == GameMode.Endless) ActionButton("继续无尽挑战", index++, delegate { Result(services.Flow.TryContinueEndless(Command())); }); }
+            if((phase==GamePhase.GameOver||phase==GamePhase.Ending)&&ui!=null&&ui.RunEndPanelPrefab!=null)DrawRunEnd(phase);
+            else {
+                if (phase == GamePhase.GameOver) { ActionButton("从记录重试", index++, Load); ActionButton("返回菜单", index++, Menu); }
+                if (phase == GamePhase.Ending) { ActionButton("返回菜单", index++, Menu); if (services.Flow.GetSnapshot().Mode == GameMode.Endless) ActionButton("继续无尽挑战", index++, delegate { Result(services.Flow.TryContinueEndless(Command())); }); }
+            }
+        }
+        private bool IsEndlessMilestone()
+        {
+            FlowSnapshot flow=services.Flow.GetSnapshot();EndlessDefinition endless=services.Catalog.GetEndlessDefinition();
+            return flow.Mode==GameMode.Endless&&endless!=null&&flow.DayIndex==endless.MilestoneNight;
+        }
+        private string ResultSummary()
+        {
+            FlowSnapshot flow=services.Flow.GetSnapshot();string text="第 "+flow.DayIndex+" 夜 · "+PhaseName(flow.Phase)+"\n当前金币："+services.Resources.GetQuantity(ResourceBucket.Inventory,"res.gold");
+            for(int i=0;i<ids.Length;i++)text+="\n"+names[i]+"手牌："+services.Resources.GetQuantity(ResourceBucket.Hand,ids[i]);
+            return text+"\n回复药剂："+services.Resources.GetQuantity(ResourceBucket.Inventory,itemIds[0])+"\n塔强化："+services.Resources.GetQuantity(ResourceBucket.Inventory,itemIds[1]);
+        }
+        private void DrawNightResult()
+        {
+            string error;if(!ui.NightResultPanelPrefab.Validate(out error))throw new InvalidOperationException(error);
+            NightResultPanelReferences instance=Instantiate(ui.NightResultPanelPrefab,actions,false);instance.gameObject.SetActive(true);
+            instance.TitleText.text="守护成功";SetResultSummary(instance.SummaryText);resultFeedback=instance.HintText;
+            bool milestone=IsEndlessMilestone();instance.HintText.text=milestone?"已完成无尽里程碑，继续挑战可领取里程碑奖励。":"确认后迎接下一天，黎明生产以实际结算为准。";
+            instance.NextDayButton.GetComponentInChildren<Text>(true).text=milestone?"继续无尽挑战":"迎接下一天";
+            instance.ReturnMenuButton.GetComponentInChildren<Text>(true).text="返回菜单";
+            BindResultButton(instance.NextDayButton,delegate {return milestone?services.Flow.TryContinueEndless(Command()):services.Flow.TryConfirmNightResult(Command());});
+            BindResultButton(instance.ReturnMenuButton,delegate {return services.Flow.TryReturnToMenu(Command());});
+        }
+        private void DrawRunEnd(GamePhase phase)
+        {
+            string error;if(!ui.RunEndPanelPrefab.Validate(out error))throw new InvalidOperationException(error);
+            RunEndPanelReferences instance=Instantiate(ui.RunEndPanelPrefab,actions,false);instance.gameObject.SetActive(true);
+            instance.TitleText.text=PhaseName(phase);SetResultSummary(instance.SummaryText);resultFeedback=instance.HintText;
+            instance.RetryButton.GetComponentInChildren<Text>(true).text="从记录重试";instance.ReturnMenuButton.GetComponentInChildren<Text>(true).text="返回菜单";instance.ContinueEndlessButton.GetComponentInChildren<Text>(true).text="继续无尽挑战";
+            instance.RetryButton.gameObject.SetActive(phase==GamePhase.GameOver);
+            instance.ContinueEndlessButton.gameObject.SetActive(false); // Production flow continues endless only from the milestone NightResult.
+            SaveReadResult save=services.Saves.ReadCheckpoint();bool retry=save.Error==ErrorCode.None&&save.Data!=null;
+            instance.HintText.text=phase==GamePhase.GameOver?(retry?"可以从最近记录重新守护灵泉。":CheckpointHint(save)):"感谢你守护灵泉。";
+            BindResultButton(instance.RetryButton,delegate {
+                SaveReadResult checkpoint=services.Saves.ReadCheckpoint();
+                if(checkpoint.Error!=ErrorCode.None||checkpoint.Data==null)return new OperationResult(OperationState.Rejected,checkpoint.Error==ErrorCode.None?ErrorCode.SaveUnavailable:checkpoint.Error,Guid.Empty,services.Flow.GetSnapshot().Revision,"ui.retry.checkpoint");
+                OperationResult loaded=services.Flow.TryLoadRun(Command(),checkpoint.Data);if(loaded.State==OperationState.Committed)productionSummary=null;return loaded;
+            });
+            instance.RetryButton.interactable=retry;
+            BindResultButton(instance.ReturnMenuButton,delegate {return services.Flow.TryReturnToMenu(Command());});
+            BindResultButton(instance.ContinueEndlessButton,delegate {return services.Flow.TryContinueEndless(Command());});
+        }
+        private void BindResultButton(Button button,Func<OperationResult> command)
+        {resultButtons.Add(button);BindButton(button,delegate {SubmitResult(command);});}
+        private void SetResultSummary(Text text)
+        {
+            text.text=ResultSummary();float height=Mathf.Max(310,text.preferredHeight+24);
+            text.rectTransform.sizeDelta=new Vector2(700,height);
+            ScrollRect scroll=text.GetComponentInParent<ScrollRect>();
+            if(scroll!=null){scroll.content.sizeDelta=new Vector2(scroll.content.sizeDelta.x,height+24);scroll.verticalNormalizedPosition=1;}
+        }
+        private void SubmitResult(Func<OperationResult> command)
+        {
+            if(services==null||resultSubmitting||resultPending!=Guid.Empty)return;
+            resultSubmitting=true;SetResultInteractable(false);
+            try{OperationResult result=command();if(result.State==OperationState.Queued)resultPending=result.CommandId;Result(result);}
+            finally{resultSubmitting=false;SetResultInteractable(resultPending==Guid.Empty);}
+        }
+        private void SetResultInteractable(bool enabled)
+        {
+            foreach(Button button in resultButtons)if(button!=null){button.interactable=enabled;
+                RunEndPanelReferences end=button.GetComponentInParent<RunEndPanelReferences>();
+                if(enabled&&end!=null&&button==end.RetryButton){SaveReadResult save=services.Saves.ReadCheckpoint();button.interactable=save.Error==ErrorCode.None&&save.Data!=null;}}
         }
         private void ActionButton(string text, int i, Action action) { Button(actions, text, 24 + i % 4 * 236, 622 + i / 4 * 44, 220, 38, action); }
         private void NewRun(GameMode mode)
@@ -174,8 +296,24 @@ namespace Spotlight.Presentation
             OperationResult result=services.Flow.TryReturnToMenu(Command());
             if(result.State==OperationState.Committed){CancelSelection();ReleasePlayerPause();}Result(result);
         }
-        private void Load() { SaveReadResult save = services.Saves.ReadCheckpoint(); if (save.Error != ErrorCode.None || save.Data == null) { note.text = ErrorText(save.Error); return; } Result(services.Flow.TryLoadRun(Command(), save.Data)); }
-        private void Place(string id) { if (services == null || services.Flow.GetSnapshot().Phase != GamePhase.Build) return; placing = id; move = swap = false; note.text = "点击空格放置，或点取消"; }
+        private static string CheckpointHint(SaveReadResult save)
+        { return save.Error==ErrorCode.SaveUnavailable||save.Error==ErrorCode.None?"没有可继续的记录，请开始新的旅程。":"继续游戏不可用："+ErrorText(save.Error)+"。请开始新的旅程。"; }
+        private void Load()
+        {
+            SaveReadResult save=services.Saves.ReadCheckpoint();
+            if(save.Error!=ErrorCode.None||save.Data==null)
+            {
+                note.text=CheckpointHint(save);
+                MainMenuPanelReferences menu=ui==null?null:ui.ActionsRoot.GetComponentInChildren<MainMenuPanelReferences>();
+                if(menu!=null){menu.HintText.text=note.text;menu.ContinueButton.interactable=false;}return;
+            }
+            OperationResult result=services.Flow.TryLoadRun(Command(),save.Data);
+            if(result.State==OperationState.Committed)productionSummary=null;
+            Result(result);
+            MainMenuPanelReferences remaining=ui==null?null:ui.ActionsRoot.GetComponentInChildren<MainMenuPanelReferences>();
+            if(remaining!=null&&result.State!=OperationState.Committed)remaining.HintText.text=note.text;
+        }
+        private void Place(string id) { if (services == null || pending.Count!=0 || services.Flow.GetSnapshot().Phase != GamePhase.Build) return; placing = id; move = swap = false; note.text = "点击空格放置，或点取消";RefreshControlStates(); }
         private void ChooseMove(bool exchange) { if (!selected) { note.text = "先点选元素或塔"; return; } placing = null; move = !exchange; swap = exchange; note.text = exchange ? "点击要交换的格子" : "点击要移往的空格"; }
         private void Update()
         {
@@ -190,7 +328,7 @@ namespace Spotlight.Presentation
         }
         private void HandleBoardClick(CellCoord clicked)
         {
-            if(services==null||blocked||services.Flow.GetSnapshot().Phase!=GamePhase.Build)return;
+            if(services==null||blocked||pending.Count!=0||services.Flow.GetSnapshot().Phase!=GamePhase.Build)return;
             if (move || swap) { OperationResult r = swap ? services.Deployment.TrySwap(Command(), cell, clicked) : services.Deployment.TryMove(Command(), cell, clicked); move = swap = false; Result(r); return; }
             if (placing != null) { Result(services.Deployment.TryPlace(Command(), new PlacementRequest { Cell = clicked, DefinitionId = placing, Kind = placing == towerId ? OccupantKind.Tower : OccupantKind.ElementBlock })); return; }
             CellSnapshot c; selected = services.Board.TryGetCell(clicked, out c) && c.OccupantKind != OccupantKind.None; cell = clicked;
@@ -351,7 +489,7 @@ namespace Spotlight.Presentation
         }
         private void BindButton(Button button,Action action)
         {
-            UnityAction listener=delegate {if(action!=null)action();};
+            UnityAction listener=delegate {if(pending.Count==0&&action!=null)action();};
             buttonBindings.Add(new ButtonBinding {Button=button,Event=button.onClick,Listener=listener});button.onClick.AddListener(listener);
         }
         private void ReleaseContainer(Transform container)

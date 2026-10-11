@@ -17,16 +17,16 @@ MonoBehaviour:
   MaxDayInclusive: 7
   Modes: 0000000001000000
   Weight: 1
-  Text: "\u672C\u8F6E\u6D4B\u8BD5\u4E8B\u4EF6"
+  Text: "本轮测试事件：补给商人。每件道具售价20金币，可购买治疗道具或叠塔道具进入背包，也可以免费离开。"
   Options:
   - Id: buy_heal
-    Text: "\u8D2D\u4E70\u6CBB\u6108"
+    Text: "花费20金币，获得治疗道具×1（背包）"
     Cost:
     - Bucket: 1
       DefinitionId: res.gold
       Amount: 20
     Effects:
-    - Id: 
+    - Id: effect.supplymerchant.1
       Kind: 4
       TargetPolicy: 4
       ReferenceId: item.heal
@@ -50,16 +50,16 @@ MonoBehaviour:
       Amount: 0
       Stacks: 0
       DurationOverride: 0
-      DamageMultiplier: 0
-      SpeedMultiplier: 0
+      DamageMultiplier: 1
+      SpeedMultiplier: 1
   - Id: buy_stack
-    Text: "\u8D2D\u4E70"
+    Text: "花费20金币，获得叠塔道具×1（背包）"
     Cost:
     - Bucket: 1
       DefinitionId: res.gold
       Amount: 20
     Effects:
-    - Id: 
+    - Id: effect.supplymerchant.2
       Kind: 4
       TargetPolicy: 4
       ReferenceId: item.tower_stack
@@ -83,9 +83,9 @@ MonoBehaviour:
       Amount: 0
       Stacks: 0
       DurationOverride: 0
-      DamageMultiplier: 0
-      SpeedMultiplier: 0
+      DamageMultiplier: 1
+      SpeedMultiplier: 1
   - Id: leave
-    Text: "\u79BB\u5F00"
+    Text: "免费离开，不获得奖励"
     Cost: []
     Effects: []

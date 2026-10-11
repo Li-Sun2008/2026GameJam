@@ -2,98 +2,55 @@ using UnityEngine;
 
 namespace Spotlight.Presentation
 {
-    /// <summary>
-    /// 受击闪烁组件：由主程在真实伤害事件中调用，不自行读取时间或订阅事件。
-    /// </summary>
-    [RequireComponent(typeof(SpriteRenderer))]
-    public class HitFlashVisual2D : MonoBehaviour
+    /// <summary>Body-only hit feedback driven by game time supplied by the world renderer.</summary>
+    public sealed class HitFlashVisual2D : MonoBehaviour
     {
-        [Header("引用")]
         public SpriteRenderer BodyRenderer;
-
-        [Header("参数")]
         public Color FlashColor = Color.white;
-        public float DurationSeconds = 0.12f;
+        public float DurationSeconds = .12f;
+        private SpriteRenderer cachedBody;
+        private Color originalColor;
+        private double endTime;
+        private bool flashing;
 
-        // 内部状态
-        private Color _originalColor;
-        private double _flashEndGameTime;
+        private void Awake() { CacheBody(); }
+        private void OnEnable() { ResetVisual(); }
+        private void OnDisable() { ResetVisual(); }
 
-        #region 生命周期
-
-        private void Awake()
+        // Also handles inspector/public-field assignment after Awake without capturing a flash tint.
+        private void CacheBody()
         {
-            // 缓存原始颜色
-            if (BodyRenderer == null)
-            {
-                BodyRenderer = GetComponent<SpriteRenderer>();
-            }
-            _originalColor = BodyRenderer != null ? BodyRenderer.color : Color.white;
+            if (cachedBody == BodyRenderer) return;
+            if (cachedBody != null && flashing) cachedBody.color = originalColor;
+            flashing = false;
+            cachedBody = BodyRenderer;
+            if (cachedBody != null) originalColor = cachedBody.color;
         }
 
-        private void OnEnable()
-        {
-            ResetVisual();
-        }
-
-        private void OnDisable()
-        {
-            ResetVisual();
-        }
-
-        #endregion
-
-        #region 公开接口（按文档固定签名）
-
-        /// <summary>
-        /// 触发闪烁。连续受击刷新结束时间。
-        /// </summary>
+        public void BindBody(SpriteRenderer body) { ResetVisual(); BodyRenderer = body; CacheBody(); }
         public void PlayHit(double gameTime)
         {
-            if (BodyRenderer == null) return;
-
-            // 非法时间忽略
-            if (gameTime <= 0) return;
-
-            // Duration <= 0 立即恢复
-            if (DurationSeconds <= 0f)
-            {
-                ResetVisual();
-                return;
-            }
-
-            _flashEndGameTime = gameTime + DurationSeconds;
-            BodyRenderer.color = FlashColor;
+            CacheBody();
+            if (cachedBody == null || !ValidTime(gameTime)) return;
+            if (float.IsNaN(DurationSeconds) || float.IsInfinity(DurationSeconds) || DurationSeconds <= 0)
+            { ResetVisual(); return; }
+            endTime = gameTime + DurationSeconds;
+            if (!ValidTime(endTime)) { ResetVisual(); return; }
+            flashing = true;
+            cachedBody.color = FlashColor;
         }
-
-        /// <summary>
-        /// 每帧由外部调用，传入当前游戏时间。到期恢复原始颜色。
-        /// </summary>
         public void ApplyVisualTime(double gameTime)
         {
-            if (BodyRenderer == null) return;
-
-            // 非法时间忽略
-            if (gameTime <= 0) return;
-
-            // 还没到闪烁结束时间，保持闪色
-            if (gameTime < _flashEndGameTime) return;
-
-            // 到期恢复
-            ResetVisual();
+            CacheBody();
+            if (flashing && ValidTime(gameTime) && gameTime >= endTime) ResetVisual();
         }
-
-        /// <summary>
-        /// 重置显示，恢复原始颜色，清除结束时间。
-        /// </summary>
         public void ResetVisual()
         {
-            if (BodyRenderer == null) return;
-
-            _flashEndGameTime = 0.0;
-            BodyRenderer.color = _originalColor;
+            CacheBody();
+            if (cachedBody != null && flashing) cachedBody.color = originalColor;
+            flashing = false;
+            endTime = 0;
         }
-
-        #endregion
+        private static bool ValidTime(double value) { return value >= 0 && !double.IsNaN(value) && !double.IsInfinity(value); }
     }
 }

@@ -1,5 +1,5 @@
 {
-    "utc": "2026-10-08T06:43:21.6394263Z",
+    "utc": "2026-10-11T05:24:47.2084955Z",
     "candidates": [
         {
             "layout": "Original three towers 1/3/5 y1, water (1,2)",
@@ -7,8 +7,8 @@
             "secondPhase": "GameOver",
             "succeeded": false,
             "nightOne": {
-                "capturedUtc": "2026-10-08T06:43:19.4316022Z",
-                "runId": "91a1c757aef941f28acead76ffe6767a",
+                "capturedUtc": "2026-10-11T05:24:44.6265684Z",
+                "runId": "0ac884f99e234b9d92b2190f6db77760",
                 "phase": "NightResult",
                 "speed": "Normal",
                 "observationNote": "Bound before run; ActorSpawnedEvent records persist after death. Day/phase/time are dispatch or first-observation values; loaded runs do not contain past birth history.",
@@ -16,8 +16,8 @@
                 "aliveEnemies": 0,
                 "totalObservedEnemyBirths": 4,
                 "attachedDuringActiveRun": false,
-                "gameTime": 13.23333402350545,
-                "tick": 397,
+                "gameTime": 11.100000578910113,
+                "tick": 333,
                 "paused": false,
                 "resources": [
                     {
@@ -71,7 +71,7 @@
                         "id": 1,
                         "kind": "Spring",
                         "definition": "spring",
-                        "hp": 65.0,
+                        "hp": 90.0,
                         "maxHp": 100.0,
                         "x": 4.0,
                         "y": -0.5
@@ -182,8 +182,8 @@
                 "settlements": []
             },
             "nightTwo": {
-                "capturedUtc": "2026-10-08T06:43:20.1855867Z",
-                "runId": "91a1c757aef941f28acead76ffe6767a",
+                "capturedUtc": "2026-10-11T05:24:45.7838465Z",
+                "runId": "0ac884f99e234b9d92b2190f6db77760",
                 "phase": "GameOver",
                 "speed": "Normal",
                 "observationNote": "Bound before run; ActorSpawnedEvent records persist after death. Day/phase/time are dispatch or first-observation values; loaded runs do not contain past birth history.",
@@ -410,7 +410,7 @@
                 ],
                 "settlements": [
                     {
-                        "id": "91a1c757aef941f28acead76ffe6767a:1",
+                        "id": "0ac884f99e234b9d92b2190f6db77760:1",
                         "boundaryNote": "Before is last observed NightResult, not transaction interception; after is actual event-dispatch read. Queued events or commands in the same frame may change resources before dispatch. Rewards are the authoritative production deltas. Null before means observer missed the boundary.",
                         "night": 1,
                         "beforeLastObservedNightResult": [
@@ -524,8 +524,8 @@
             "secondPhase": "NightResult",
             "succeeded": true,
             "nightOne": {
-                "capturedUtc": "2026-10-08T06:43:20.8175746Z",
-                "runId": "ac96ea177d864784888bebeef2608934",
+                "capturedUtc": "2026-10-11T05:24:46.3305725Z",
+                "runId": "fdaa61cd9ea14bbca67dc918e3305aee",
                 "phase": "NightResult",
                 "speed": "Normal",
                 "observationNote": "Bound before run; ActorSpawnedEvent records persist after death. Day/phase/time are dispatch or first-observation values; loaded runs do not contain past birth history.",
@@ -533,8 +533,8 @@
                 "aliveEnemies": 0,
                 "totalObservedEnemyBirths": 4,
                 "attachedDuringActiveRun": false,
-                "gameTime": 7.233333710581064,
-                "tick": 217,
+                "gameTime": 7.500000391155481,
+                "tick": 225,
                 "paused": false,
                 "resources": [
                     {
@@ -735,8 +735,8 @@
                 "settlements": []
             },
             "nightTwo": {
-                "capturedUtc": "2026-10-08T06:43:21.6375469Z",
-                "runId": "ac96ea177d864784888bebeef2608934",
+                "capturedUtc": "2026-10-11T05:24:47.2074917Z",
+                "runId": "fdaa61cd9ea14bbca67dc918e3305aee",
                 "phase": "NightResult",
                 "speed": "Normal",
                 "observationNote": "Bound before run; ActorSpawnedEvent records persist after death. Day/phase/time are dispatch or first-observation values; loaded runs do not contain past birth history.",
@@ -744,8 +744,8 @@
                 "aliveEnemies": 0,
                 "totalObservedEnemyBirths": 10,
                 "attachedDuringActiveRun": false,
-                "gameTime": 11.06666724383831,
-                "tick": 332,
+                "gameTime": 11.100000578910113,
+                "tick": 333,
                 "paused": false,
                 "resources": [
                     {
@@ -958,7 +958,7 @@
                         "phase": "Build",
                         "source": "ActorSpawnedEvent (dispatch time)",
                         "day": 2,
-                        "gameTime": 7.233333710581064
+                        "gameTime": 7.500000391155481
                     },
                     {
                         "id": 13,
@@ -1017,7 +1017,7 @@
                 ],
                 "settlements": [
                     {
-                        "id": "ac96ea177d864784888bebeef2608934:1",
+                        "id": "fdaa61cd9ea14bbca67dc918e3305aee:1",
                         "boundaryNote": "Before is last observed NightResult, not transaction interception; after is actual event-dispatch read. Queued events or commands in the same frame may change resources before dispatch. Rewards are the authoritative production deltas. Null before means observer missed the boundary.",
                         "night": 1,
                         "beforeLastObservedNightResult": [

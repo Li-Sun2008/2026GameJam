@@ -48,7 +48,7 @@ namespace Spotlight.Tests.Integration
         }
         [SetUp] public void Setup()
         {
-            seconds=0;seen.Clear();evidence=new Evidence {test=TestContext.CurrentContext.Test.Name,scope="Actual Boss SOs and EnemyServices, delegated real projectile/effect services, real damage and transactions. Boss manually spawned at t=0 with active night7 scheduler, no base-wave scheduling while boss remains alive. H02 enemy/flight registration is test-only; no production definitions changed."};
+            seconds=0;seen.Clear();evidence=new Evidence {test=TestContext.CurrentContext.Test.Name,scope="Actual Boss SOs and EnemyServices, delegated real projectile/effect services, real damage and transactions. Boss manually spawned at t=0 with active night7 scheduler, no base-wave scheduling while boss remains alive. Enemies, flight paths and boss curse status are registered by the production Catalog assets."};
             directory=Path.Combine(Path.GetTempPath(),"Spotlight_N06_"+Guid.NewGuid().ToString("N"));
             runtime=new ModuleComposition(R3BTestCatalog.Build(),directory);var core=runtime.Core;
             Assert.AreEqual(ErrorCode.None,core.Store.Initialize(new NewRunRequest {LevelId="level.prototype",Mode=GameMode.Story,Seed=606}).Error);
@@ -89,21 +89,19 @@ namespace Spotlight.Tests.Integration
             Assert.AreEqual(5,shot.PeriodSeconds);Assert.AreEqual(5,shot.FirstDelaySeconds);Assert.AreEqual(15,shot.ProjectileDamage);Assert.AreEqual("projectile.enemy",shot.ProjectileId);
             Assert.AreEqual(20,summon.PeriodSeconds);Assert.AreEqual(20,summon.FirstDelaySeconds);Assert.AreEqual(1,summon.Summons.Count);
             SpawnGroupDefinition group=summon.Summons[0];Assert.AreEqual("enemy.goblin.melee",group.EnemyId);Assert.AreEqual(3,group.Count);Assert.AreEqual(0,group.StartDelaySeconds);Assert.AreEqual(1,group.SpawnIntervalSeconds);Assert.IsFalse(group.ApplyDayGrowth);Assert.AreEqual(1,group.HpMultiplier);Assert.AreEqual(1,group.DamageMultiplier);
-            Assert.AreEqual(40,curse.PeriodSeconds);Assert.AreEqual(40,curse.FirstDelaySeconds);Assert.AreEqual(1,curse.Effects.Count);Assert.AreEqual(EffectKind.Damage,curse.Effects[0].Kind);Assert.AreEqual(EffectTargetPolicy.Spring,curse.Effects[0].TargetPolicy);Assert.AreEqual(10,curse.Effects[0].PhysicalDamage);
+            Assert.AreEqual(40,curse.PeriodSeconds);Assert.AreEqual(40,curse.FirstDelaySeconds);Assert.AreEqual(1,curse.Effects.Count);Assert.AreEqual(EffectKind.ApplyStatus,curse.Effects[0].Kind);Assert.AreEqual(EffectTargetPolicy.AllTowers,curse.Effects[0].TargetPolicy);Assert.AreEqual("status.boss.curse",curse.Effects[0].ReferenceId);Assert.AreEqual(10,curse.Effects[0].DurationOverride);
             for(int i=0;i<340;i++)TickBoss(.25f);
             var shots=evidence.casts.FindAll(c=>c.skill=="boss.shot");var curses=evidence.casts.FindAll(c=>c.skill=="boss.curse");
             Assert.AreEqual(17,shots.Count);for(int i=0;i<shots.Count;i++){Assert.AreEqual((i+1)*5,shots[i].seconds);Assert.AreEqual(15,shots[i].baseDamage);Assert.AreEqual(boss.Value,shots[i].source);Assert.AreEqual(runtime.Core.World.SpringId.Value,shots[i].target);Assert.AreEqual("Committed",shots[i].result);}
-            Assert.AreEqual(2,curses.Count);for(int i=0;i<curses.Count;i++){Assert.AreEqual((i+1)*40,curses[i].seconds);Assert.AreEqual(10,curses[i].baseDamage);Assert.AreEqual("Committed",curses[i].result);}
+            Assert.AreEqual(2,curses.Count);for(int i=0;i<curses.Count;i++){Assert.AreEqual((i+1)*40,curses[i].seconds);Assert.AreEqual(0,curses[i].baseDamage);Assert.AreEqual("Committed",curses[i].result);}
             Assert.AreEqual(12,evidence.summons.Count);
             for(int i=0;i<12;i++)
             {
                 Birth birth=evidence.summons[i];float first=(i/3+1)*20;
                 Assert.AreEqual(first+(i%3==0?.25f:i%3),birth.seconds);Assert.AreEqual("enemy.goblin.melee",birth.enemy);Assert.AreEqual("path.ground",birth.path);Assert.AreEqual(30,birth.hp);
             }
-            Assert.AreEqual(2,evidence.hits.Count);Assert.AreEqual(40,evidence.hits[0].seconds);Assert.AreEqual(80,evidence.hits[1].seconds);
-            foreach(Hit hit in evidence.hits){Assert.AreEqual(boss.Value,hit.source);Assert.AreEqual(runtime.Core.World.SpringId.Value,hit.target);Assert.AreEqual(10,hit.damage);}
-            Assert.AreEqual(80,evidence.hits[1].hp);Assert.AreEqual(13,service.Waves.GetSnapshot().AliveCount);
-            // Projectiles are created but not advanced in this cadence test, isolating curse damage.
+            Assert.AreEqual(0,evidence.hits.Count); ActorSnapshot spring; Assert.IsTrue(runtime.Core.World.TryGetActor(runtime.Core.World.SpringId,out spring)); Assert.AreEqual(100,spring.CurrentHp); Assert.AreEqual(13,service.Waves.GetSnapshot().AliveCount);
+            // Projectiles are created but not advanced here; curse must never damage the Spring.
         }
         [Test] public void ActualBossProjectileHitsSpringForFifteen()
         {

@@ -44,7 +44,7 @@ namespace Spotlight.Bootstrap
         IEnumerator ExecuteSmoke()
         {
             report.utc=DateTime.UtcNow.ToString("o");report.platform=Application.platform.ToString();report.isolatedSaveDirectory=isolatedDirectory;
-            report.limitation="Seed 456; zero-based Day1 towers (1,1)/(3,1)/(5,1)/(5,3)/(7,1), water (1,2), existing tower_stack on (5,1). Day2 existing heal on Spring, add tower (6,3) using real drops. First legal event. Real commands/Bootstrap Update; no HP overrides or UI/material validation. Temp saves retained. Success requires an executed report.";
+            report.limitation="Seed 456; zero-based Day1 towers (1,1)/(3,1)/(5,1)/(5,3)/(7,1), water (1,2), existing tower_stack on (5,1). Day2 existing heal on Spring, add tower (6,3) using real drops. Prefer a free legal event option so purchases do not consume the layout budget; paid branches have separate integration tests. Real commands/Bootstrap Update; no HP overrides or UI/material validation. Temp saves retained. Success requires an executed report.";
             yield return null;
             bootstrap=UnityEngine.Object.FindObjectOfType<GameBootstrap>();
             if(bootstrap==null||bootstrap.Services==null){Finish("Real Bootstrap initialization failed.");yield break;}
@@ -95,7 +95,9 @@ namespace Spotlight.Bootstrap
             if(services.Flow.GetSnapshot().Phase==GamePhase.Build)return true;
             if(services.Flow.GetSnapshot().Phase!=GamePhase.DayEvent)return Fail("Unexpected event phase.");
             DayEventSnapshot day=services.Gameplay.DayEvents.GetSnapshot();if(day.State==null||day.Options==null)return Fail("Missing event snapshot.");
-            foreach(EventOptionDefinition option in day.Options)
+            var options=new List<EventOptionDefinition>(day.Options);
+            options.Sort((a,b)=>(a.Cost==null||a.Cost.Count==0?0:1).CompareTo(b.Cost==null||b.Cost.Count==0?0:1));
+            foreach(EventOptionDefinition option in options)
             {
                 OperationResult result=services.Gameplay.DayEvents.TryChoose(Command(),day.State.InstanceId,option.Id);
                 if(result.State==OperationState.Committed){report.checks.Add("day "+day.State.DayIndex+" event "+day.State.DefinitionId+" / "+option.Id);return true;}

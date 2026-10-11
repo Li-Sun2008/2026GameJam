@@ -11,6 +11,8 @@ namespace Spotlight.Bootstrap
     {
         private ModuleComposition services;
         private ViewPool pool;
+        private IDisposable damageSubscription;
+        private readonly Dictionary<string, double> pendingHits = new Dictionary<string, double>();
         private sealed class DisplayEntry
         {
             internal PoolLease Lease;
@@ -20,6 +22,7 @@ namespace Spotlight.Bootstrap
             internal ProjectileVisual2D Projectile;
             internal EnemyHealthBar2D HealthBar;
             internal EnemyFacingVisual2D Facing;
+            internal HitFlashVisual2D HitFlash;
             internal WorldPoint LastPosition;
             internal bool HasPosition;
         }
@@ -35,6 +38,8 @@ namespace Spotlight.Bootstrap
             Unbind();
             this.services = services;
             this.pool = pool;
+            if (services != null)
+                damageSubscription = services.Events.Subscribe<DamageAppliedEvent>(OnDamageApplied);
             tileTexture = new Texture2D(1, 1);
             tileTexture.SetPixel(0, 0, Color.white);
             tileTexture.Apply();
@@ -75,6 +80,22 @@ namespace Spotlight.Bootstrap
             }
             foreach (string key in new List<string>(views.Keys))
                 if (!visible.Contains(key)) ReturnView(key);
+            pendingHits.Clear();
+        }
+
+        private void OnDamageApplied(DamageAppliedEvent damage)
+        {
+            if (services == null || damage == null || damage.Result == null) return;
+            DamageResult result = damage.Result;
+            if (result.Error != ErrorCode.None || result.FinalDamage <= 0 || float.IsNaN(result.FinalDamage) || float.IsInfinity(result.FinalDamage)) return;
+            string currentRun = services.Flow.GetSnapshot().RunId;
+            if (string.IsNullOrEmpty(currentRun)) return;
+            if (currentRun != runId) { ClearViews(); runId = currentRun; BuildTiles(); }
+            string key = "actor:" + result.Target.Value;
+            double time = services.Clock.GetSnapshot().GameTime;
+            DisplayEntry entry;
+            if (views.TryGetValue(key, out entry) && entry.HitFlash != null) entry.HitFlash.PlayHit(time);
+            else pendingHits[key] = time;
         }
 
         private string ActorPrefab(ActorSnapshot actor)
@@ -122,6 +143,16 @@ namespace Spotlight.Bootstrap
                     // Enemy bodies live below the positioning root; never select the health bar.
                     if (entry.Facing != null && entry.Facing.BodyRenderer != null)
                         entry.Renderer = entry.Facing.BodyRenderer;
+                    if (actor != null && actor.Kind == ActorKind.Enemy && entry.Renderer != null)
+                    {
+                        entry.HitFlash = view.GetComponent<HitFlashVisual2D>();
+                        if (entry.HitFlash == null) entry.HitFlash = view.AddComponent<HitFlashVisual2D>();
+                        entry.HitFlash.BindBody(entry.Renderer);
+                        if (entry.HitFlash.FlashColor == entry.Renderer.color)
+                            entry.HitFlash.FlashColor = new Color(1f, .3f, .3f, entry.Renderer.color.a);
+                        double hitTime;
+                        if (pendingHits.TryGetValue(key, out hitTime)) entry.HitFlash.PlayHit(hitTime);
+                    }
                     views.Add(key, entry);
                 }
                 catch (Exception exception)
@@ -134,6 +165,7 @@ namespace Spotlight.Bootstrap
             entry.View.transform.position = new Vector3(position.X, position.Y, 0);
             if (entry.Renderer != null) entry.Renderer.sortingOrder = order;
             if (entry.Element != null) entry.Element.ApplyVisualTime(gameTime);
+            if (entry.HitFlash != null) entry.HitFlash.ApplyVisualTime(gameTime);
             if (entry.Projectile != null && projectile != null)
             {
                 entry.Projectile.SetDirection(projectile.Direction);
@@ -156,6 +188,8 @@ namespace Spotlight.Bootstrap
         {
             DisplayEntry entry = views[key];
             views.Remove(key);
+            pendingHits.Remove(key);
+            if (entry.HitFlash != null) entry.HitFlash.ResetVisual();
             if (pool != null) pool.Return(entry.Lease.LeaseId);
         }
 
@@ -182,12 +216,15 @@ namespace Spotlight.Bootstrap
         {
             foreach (string key in new List<string>(views.Keys)) ReturnView(key);
             visible.Clear();
+            pendingHits.Clear();
             foreach (GameObject tile in tiles) if (tile != null) Destroy(tile);
             tiles.Clear();
         }
 
         public void Unbind()
         {
+            if (damageSubscription != null) damageSubscription.Dispose();
+            damageSubscription = null;
             ClearViews(); services = null; pool = null; runId = null;
             if (tileSprite != null) Destroy(tileSprite);
             if (tileTexture != null) Destroy(tileTexture);

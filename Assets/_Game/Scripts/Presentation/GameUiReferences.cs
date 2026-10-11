@@ -9,6 +9,10 @@ namespace Spotlight.Presentation
         public Canvas Canvas;
         public TutorialPanelReferences TutorialPanelPrefab;
         public DayEventPanelReferences DayEventPanelPrefab;
+        public NightResultPanelReferences NightResultPanelPrefab;
+        public RunEndPanelReferences RunEndPanelPrefab;
+        [Tooltip("可选；未绑定时使用兼容菜单。")] public MainMenuPanelReferences MainMenuPanelPrefab;
+        [Tooltip("可选；只显示当前局已接收的黎明生产事件。")] public Text ProductionSummaryText;
         public Text TitleText, SpringHpText, WaveText, SkillText, GoldText, HintText, SelectionText;
         public Text[] HandTexts = new Text[6];
         public Text[] ItemTexts = new Text[2];
@@ -48,7 +52,7 @@ namespace Spotlight.Presentation
             System.Collections.Generic.List<Component> references=new System.Collections.Generic.List<Component>
             {TitleText,SpringHpText,WaveText,SkillText,GoldText,HintText,SelectionText,CancelSelectionButton,PauseButton,NormalSpeedButton,DoubleSpeedButton,ActionsRoot,ModalRoot};
             references.AddRange(HandTexts);references.AddRange(ItemTexts);references.AddRange(ElementButtons);references.AddRange(ItemButtons);
-            references.Add(DayText);references.Add(PhaseText);references.Add(SpeedText);references.Add(PauseButtonText);references.Add(SpringHpBar);
+            references.Add(ProductionSummaryText);references.Add(DayText);references.Add(PhaseText);references.Add(SpeedText);references.Add(PauseButtonText);references.Add(SpringHpBar);
             foreach(Component reference in references)if(reference!=null&&!reference.transform.IsChildOf(Canvas.transform))
             {error="UI 引用必须属于 Prefab Canvas："+reference.name;return false;}
             error = null;

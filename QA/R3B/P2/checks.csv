@@ -1,0 +1,3 @@
+"TaskId","CaseId","Commit","ConfigVersion","Seed","Time","Mode","Day","Input","Expected","Actual","Result","Evidence"
+"R3B-P2","production-registration","working-tree","prototype.1","","2026-10-09T14:03:40.2948690Z","static","","production-registration","three wood adjacency assets referenced","Formal asset Unity checks passed; 132/132 total","Passed","QA/R3B/Integration/editmode-tests.xml;QA/R3B/Integration/result-summary.json"
+"R3B-P2","adjacency-regression","working-tree","prototype.1","","2026-10-09T14:03:40.2948690Z","static","","adjacency-regression","four cardinal directions apply; diagonal and distant do not","Formal asset Unity checks passed; 132/132 total","Passed","QA/R3B/Integration/editmode-tests.xml;QA/R3B/Integration/result-summary.json"

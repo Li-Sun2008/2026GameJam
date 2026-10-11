@@ -1,31 +1,8 @@
 {
     "night": 3,
-    "scope": "Isolated EnemyServices SpawnAndBoss scheduler with real SO assets and transactions. Test-only enemy registration and Flying path sharing ground Cells. No movement, combat balance, drops, rendering or public-scene acceptance. N05 drops are present; H02 public integration remains.",
+    "scope": "Isolated EnemyServices SpawnAndBoss scheduler with real SO assets and transactions. Formal catalog enemy registration and configured Flying route. No movement, combat balance, drops, rendering or public-scene acceptance. Formal catalog references are validated without in-memory supplementation.",
     "passed": true,
-    "publicCatalogErrors": [
-        "wave.story.3: unknown enemy",
-        "wave.story.3: unknown enemy",
-        "wave.story.4: unknown enemy",
-        "wave.story.4: unknown enemy",
-        "wave.story.4: unknown enemy",
-        "wave.story.5: unknown enemy",
-        "wave.story.5: unknown enemy",
-        "wave.story.5: unknown enemy",
-        "wave.story.5: unknown enemy",
-        "wave.story.5: unknown enemy",
-        "wave.story.6: unknown enemy",
-        "wave.story.6: unknown enemy",
-        "wave.story.6: unknown enemy",
-        "wave.story.6: unknown enemy",
-        "wave.story.6: unknown enemy",
-        "wave.story.6: unknown enemy",
-        "wave.story.7: unknown enemy",
-        "wave.story.7: unknown enemy",
-        "wave.story.7: unknown enemy",
-        "wave.story.7: unknown enemy",
-        "wave.story.7: unknown enemy",
-        "wave.story.7: unknown enemy"
-    ],
+    "publicCatalogErrors": [],
     "births": [
         {
             "actor": 2,

@@ -1,6 +1,6 @@
 {
     "test": "ThreeSkillsKeepExistingPeriodsDamageAndFixedSummons",
-    "scope": "Actual Boss SOs and EnemyServices, delegated real projectile/effect services, real damage and transactions. Boss manually spawned at t=0 with active night7 scheduler, no base-wave scheduling while boss remains alive. H02 enemy/flight registration is test-only; no production definitions changed.",
+    "scope": "Actual Boss SOs and EnemyServices, delegated real projectile/effect services, real damage and transactions. Boss manually spawned at t=0 with active night7 scheduler, no base-wave scheduling while boss remains alive. Enemies, flight paths and boss curse status are registered by the production Catalog assets.",
     "passed": true,
     "casts": [
         {
@@ -71,7 +71,7 @@
             "skill": "boss.curse",
             "result": "Committed",
             "seconds": 40.0,
-            "baseDamage": 10.0,
+            "baseDamage": 0.0,
             "source": 2,
             "target": 1
         },
@@ -143,7 +143,7 @@
             "skill": "boss.curse",
             "result": "Committed",
             "seconds": 80.0,
-            "baseDamage": 10.0,
+            "baseDamage": 0.0,
             "source": 2,
             "target": 1
         },
@@ -242,20 +242,5 @@
             "hp": 30.0
         }
     ],
-    "hits": [
-        {
-            "seconds": 40.0,
-            "damage": 10.0,
-            "hp": 90.0,
-            "source": 2,
-            "target": 1
-        },
-        {
-            "seconds": 80.0,
-            "damage": 10.0,
-            "hp": 80.0,
-            "source": 2,
-            "target": 1
-        }
-    ]
+    "hits": []
 }

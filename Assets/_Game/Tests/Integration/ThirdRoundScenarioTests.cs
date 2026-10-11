@@ -81,7 +81,10 @@ namespace Spotlight.Tests.Integration
         void ChooseEvent()
         {
             if(runtime.Flow.GetSnapshot().Phase==GamePhase.Build)return;DayEventSnapshot day=runtime.Gameplay.DayEvents.GetSnapshot();
-            bool chosen=false;foreach(EventOptionDefinition option in day.Options)if(runtime.Gameplay.DayEvents.TryChoose(Command(),day.State.InstanceId,option.Id).State==OperationState.Committed){chosen=true;if(evidence!=null)evidence.eventChoices.Add(new EventChoice {day=day.State.DayIndex,definition=day.State.DefinitionId,option=option.Id,runId=runtime.Flow.GetSnapshot().RunId});break;}
+            // This layout experiment reserves its gold for towers. Paid event branches are tested separately.
+            var options=new List<EventOptionDefinition>(day.Options);
+            options.Sort((a,b)=>(a.Cost==null||a.Cost.Count==0?0:1).CompareTo(b.Cost==null||b.Cost.Count==0?0:1));
+            bool chosen=false;foreach(EventOptionDefinition option in options)if(runtime.Gameplay.DayEvents.TryChoose(Command(),day.State.InstanceId,option.Id).State==OperationState.Committed){chosen=true;if(evidence!=null)evidence.eventChoices.Add(new EventChoice {day=day.State.DayIndex,definition=day.State.DefinitionId,option=option.Id,runId=runtime.Flow.GetSnapshot().RunId});break;}
             Assert.IsTrue(chosen);Advance(0);Assert.AreEqual(GamePhase.Build,runtime.Flow.GetSnapshot().Phase);
         }
         void Advance(float delta){runtime.Advance(delta);recorder.Observe();}
@@ -170,8 +173,8 @@ namespace Spotlight.Tests.Integration
         {
             Place("elm.water",OccupantKind.ElementBlock,3,4);Place("elm.fire",OccupantKind.ElementBlock,3+dx,4+dy);
             ProductionResult result=runtime.Elements.ResolveProduction(new ProductionInput {SettlementId="qa.adjacency",CompletedNight=1,Board=runtime.Core.Board.GetSnapshot(),Random=runtime.Core.Random.GetState(RandomStream.Production)});
-            // Current real prototype only configures six non-consuming single rules. Do not invent an adjacent pair rule for QA.
-            foreach(ProductionRuleDefinition rule in runtime.Catalog.GetProductionRules())if(rule.Enabled)Assert.AreEqual(ProductionMatch.SingleBlock,rule.Match,"Catalog changed: update expectations to the real adjacency configuration.");
+            // Six single rules and three wood adjacency rules are registered in the formal catalog.
+            Assert.AreEqual(9,runtime.Catalog.GetProductionRules().Count);
             long water=0,fire=0;foreach(ResourceAmount delta in result.HandDeltas){if(delta.DefinitionId=="elm.water")water+=delta.Amount;if(delta.DefinitionId=="elm.fire")fire+=delta.Amount;}
             Assert.AreEqual(1,water);Assert.AreEqual(1,fire);Assert.AreEqual(0,result.Board.Count);
         }

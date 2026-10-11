@@ -1,0 +1,166 @@
+{
+  "utc": "2026-10-09T14:03:40.294869Z",
+  "branch": "main",
+  "mergedHead": "bf54ac2bf8292e2efe723409a673f5b4969f17a2",
+  "fixes": "working tree; not committed",
+  "base": "9961325817eaf88005759fd0344d4677fb2fbcf6",
+  "prs": [
+    10,
+    11,
+    12,
+    13,
+    14
+  ],
+  "unityVersion": "2022.3.33f1c1",
+  "configVersion": "prototype.1",
+  "result": "Passed",
+  "total": 132,
+  "passed": 132,
+  "failed": 0,
+  "skipped": 0,
+  "testClasses": [
+    {
+      "class": "Spotlight.Tests.Core.FoundationTests",
+      "total": 10,
+      "passed": 10,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Core.SaveTests",
+      "total": 7,
+      "passed": 7,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Enemies.EndlessWaveProviderTests",
+      "total": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Gameplay.ItemServiceTests",
+      "total": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Integration.FlowIntegrationTests",
+      "total": 9,
+      "passed": 9,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Integration.FormalUiBootstrapTests",
+      "total": 1,
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Integration.FormalUiIntegrationTests",
+      "total": 8,
+      "passed": 8,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Integration.PBootstrapSmokeTests",
+      "total": 1,
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Integration.R3BBossSkillTests",
+      "total": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Integration.R3BCatalogIntegrationTests",
+      "total": 11,
+      "passed": 11,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Integration.R3BCombatIntegrationTests",
+      "total": 13,
+      "passed": 13,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Integration.R3BEnemyPrefabTests",
+      "total": 1,
+      "passed": 1,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Integration.R3BLootTests",
+      "total": 17,
+      "passed": 17,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Integration.R3BMenuIntegrationTests",
+      "total": 11,
+      "passed": 11,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Integration.R3BStoryWaveTests",
+      "total": 5,
+      "passed": 5,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Integration.RuntimeLoopTests",
+      "total": 4,
+      "passed": 4,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Integration.ThirdRoundPresentationTests",
+      "total": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Integration.ThirdRoundScenarioTests",
+      "total": 14,
+      "passed": 14,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.Integration.ThirdRoundUiIntegrationTests",
+      "total": 5,
+      "passed": 5,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.PBoundaryNUnitTests",
+      "total": 2,
+      "passed": 2,
+      "failed": 0
+    },
+    {
+      "class": "Spotlight.Tests.PPresentationTests",
+      "total": 3,
+      "passed": 3,
+      "failed": 0
+    }
+  ],
+  "evidence": "QA/R3B/Integration/editmode-tests.xml",
+  "scope": "Native Unity EditMode including explicit EnterPlayMode and D3D11 captures. Formal asset configuration used. Seven-night ending flow test boosts tower stats; balance verified separately only for first two normal nights.",
+  "windowsBuild": {
+    "succeeded": true,
+    "errors": 0,
+    "warnings": 1,
+    "report": "QA/R3B/Integration/build-report.json"
+  },
+  "standaloneSmoke": {
+    "succeeded": true,
+    "exitCode": 0,
+    "day1Births": 4,
+    "day2Births": 6,
+    "day1SpringHp": 100.0,
+    "day2SpringHp": 100.0,
+    "report": "QA/R3B/Integration/player-smoke.json"
+  }
+}

@@ -30,7 +30,7 @@ namespace Spotlight.Tests.Integration
         [SetUp] public void Setup()
         {
             lootEvents=productionEvents=0;
-            evidence=new Evidence { test=TestContext.CurrentContext.Test.Name, scope="Real assets, ModuleComposition, damage/death/loot transactions and dawn production. H02 enemy/flight registration only is supplied in memory by R3BTestCatalog; no production assets, HP, damage or drop results are altered." };
+            evidence=new Evidence { test=TestContext.CurrentContext.Test.Name, scope="Real assets, ModuleComposition, damage/death/loot transactions and dawn production. Enemy, flight, drop and production definitions come from the formal Catalog asset; no HP, damage or drop results are altered." };
             directory=Path.Combine(Path.GetTempPath(),"Spotlight_N05_"+Guid.NewGuid().ToString("N"));
             runtime=new ModuleComposition(R3BTestCatalog.Build(),directory);
             subscriptions.Add(runtime.Events.Subscribe<LootGrantedEvent>(e=>{lootEvents++;AddReward("kill.drop",e.Enemy.Value,e.Rewards);}));

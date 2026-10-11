@@ -17,12 +17,12 @@ MonoBehaviour:
   FirstDelaySeconds: 40
   Effects:
   - Id: curse
-    Kind: 0
-    TargetPolicy: 1
-    ReferenceId: 
+    Kind: 3
+    TargetPolicy: 3
+    ReferenceId: status.boss.curse
     ResourceBucket: 0
     ResourceAmount: 0
-    PhysicalDamage: 10
+    PhysicalDamage: 0
     ElementDamage:
       Water: 0
       Fire: 0
@@ -38,8 +38,8 @@ MonoBehaviour:
       Wind: 0
       Thunder: 0
     Amount: 0
-    Stacks: 0
-    DurationOverride: 0
+    Stacks: 1
+    DurationOverride: 10
     DamageMultiplier: 1
     SpeedMultiplier: 1
   Summons: []

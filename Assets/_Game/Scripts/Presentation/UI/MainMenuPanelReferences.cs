@@ -17,15 +17,10 @@ namespace Spotlight.Presentation
             if (TitleText == null || HintText == null) { error = "TitleText or HintText is missing."; return false; }
             if (StoryButton == null || EndlessButton == null || ContinueButton == null) { error = "One or more buttons are missing."; return false; }
 
-            // 2. 检查层级（Root 必须是脚本所在根 RectTransform，其他在 Root 子层级）
-            if (Root != transform as RectTransform) { error = "Root must be the script's own RectTransform."; return false; }
-            if (!TitleText.transform.IsChildOf(Root) || !HintText.transform.IsChildOf(Root) ||
-                !StoryButton.transform.IsChildOf(Root) || !EndlessButton.transform.IsChildOf(Root) || !ContinueButton.transform.IsChildOf(Root))
-            {
-                error = "UI references must be children of Root.";
-                return false;
-            }
-
+            if (!PanelReferenceValidation.ValidateRoot(this, Root, out error)) return false;
+            foreach (Component reference in new Component[] { TitleText, HintText, StoryButton, EndlessButton, ContinueButton })
+                if (reference.transform == Root || !reference.transform.IsChildOf(Root))
+                { error = "UI references must be children of Root."; return false; }
             // 3. 按钮互不重复
             if (StoryButton == EndlessButton || StoryButton == ContinueButton || EndlessButton == ContinueButton)
             {

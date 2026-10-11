@@ -19,7 +19,7 @@ using UnityEngine;
 namespace Spotlight.Tests.Integration
 {
     // Scheduler acceptance only: real assets/transactions, no movement, attacks or loot ticks.
-    // N05 drops are real catalog assets; H02 public enemy/flight integration remains unresolved.
+    // Enemy, drop and Flying route registrations are loaded from the formal public catalog.
     public sealed class R3BStoryWaveTests
     {
         static readonly string[] GroupIds = { "melee", "ranged", "slime_water", "slime_fire", "slime_thunder", "sandworm", "gargoyle", "falcon", "boss" };
@@ -59,7 +59,7 @@ namespace Spotlight.Tests.Integration
             CatalogData data = catalogAsset.BuildCatalogData();
             var evidence = new Evidence {
                 night = night,
-                scope = "Isolated EnemyServices SpawnAndBoss scheduler with real SO assets and transactions. Test-only enemy registration and Flying path sharing ground Cells. No movement, combat balance, drops, rendering or public-scene acceptance. N05 drops are present; H02 public integration remains.",
+                scope = "Isolated EnemyServices SpawnAndBoss scheduler with real SO assets and transactions. Formal catalog enemy registration and configured Flying route. No movement, combat balance, drops, rendering or public-scene acceptance. Formal catalog references are validated without in-memory supplementation.",
                 publicCatalogErrors = new List<string>(new GameCatalog(data).ValidateAll()).ToArray()
             };
             var wave = AssetDatabase.LoadAssetAtPath<WaveDefinitionSO>(AssetsPath + "StoryNight" + night + ".asset");

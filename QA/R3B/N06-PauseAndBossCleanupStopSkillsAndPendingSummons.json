@@ -1,6 +1,6 @@
 {
     "test": "PauseAndBossCleanupStopSkillsAndPendingSummons",
-    "scope": "Actual Boss SOs and EnemyServices, delegated real projectile/effect services, real damage and transactions. Boss manually spawned at t=0 with active night7 scheduler, no base-wave scheduling while boss remains alive. H02 enemy/flight registration is test-only; no production definitions changed.",
+    "scope": "Actual Boss SOs and EnemyServices, delegated real projectile/effect services, real damage and transactions. Boss manually spawned at t=0 with active night7 scheduler, no base-wave scheduling while boss remains alive. Enemies, flight paths and boss curse status are registered by the production Catalog assets.",
     "passed": true,
     "casts": [
         {

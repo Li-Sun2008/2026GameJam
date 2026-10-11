@@ -15,6 +15,18 @@ MonoBehaviour:
   Settings: {fileID: 11400000, guid: e44f3374f4fdae7409e70f2518e8a35b, type: 2}
   Endless: {fileID: 11400000, guid: 84ccb92ac7881de469750c6abffdbcc1, type: 2}
   PrefabEntries:
+  - Key: EnemyFalcon
+    Prefab: {fileID: 4235684136518189488, guid: f4bcb10a62087614ead74e7a460951d4, type: 3}
+  - Key: EnemyGargoyle
+    Prefab: {fileID: 5956994143564026277, guid: e06e4950d78351444a8a0b93ecd0eda2, type: 3}
+  - Key: EnemySandworm
+    Prefab: {fileID: 1822321822281677456, guid: e02cc07979dd58b4d8e1f14f4aca5558, type: 3}
+  - Key: EnemySlimeThunder
+    Prefab: {fileID: 1664834595264121563, guid: 53137c0f455fe65469686a352bf8667c, type: 3}
+  - Key: EnemySlimeFire
+    Prefab: {fileID: 5729123212321534685, guid: 6cc59c44a157097478adc99e64018348, type: 3}
+  - Key: EnemySlimeWater
+    Prefab: {fileID: 6464445744850525076, guid: 70b65c6446841464ebda4e4ca57ab69d, type: 3}
   - Key: ElementWater
     Prefab: {fileID: 4920242824643596548, guid: 5eed85b808b99034ca619e8c84ea4c77, type: 3}
   - Key: ElementFire
@@ -51,6 +63,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1f66958b389cad94999b52a6bf57ef05, type: 2}
   - {fileID: 11400000, guid: 138cde86bf4fabd4981b4f5ca365b3ba, type: 2}
   ProductionRules:
+  - {fileID: 11400000, guid: d397b1ce9e74a664d9282f918645bfcb, type: 2}
+  - {fileID: 11400000, guid: 8dfe2c15ec29dbb4e8d4f58ca6112ceb, type: 2}
+  - {fileID: 11400000, guid: df86b5f3b6f0cc7498c23ae9f8ceaec9, type: 2}
   - {fileID: 11400000, guid: 760aa62c65d3e1a4991a2bd8fef58cbf, type: 2}
   - {fileID: 11400000, guid: 94b19568722c12042af61e4ff9abb5f5, type: 2}
   - {fileID: 11400000, guid: ea2db888cc7141f4c9e9b89cefcfeb56, type: 2}
@@ -113,6 +128,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f46bfafbf1089f444a02dd5fd4f61cfe, type: 2}
   - {fileID: 11400000, guid: 910279f9283b9ee489745d71315db68b, type: 2}
   Statuses:
+  - {fileID: 11400000, guid: 797196f682274c8f813edbba0d602264, type: 2}
+  - {fileID: 11400000, guid: 16732f5cbe5e460408e2ff8767758cc2, type: 2}
+  - {fileID: 11400000, guid: 66a74f906be6adf4c8bc1a273aa8b8f3, type: 2}
+  - {fileID: 11400000, guid: aa9bd84a133b09d4897178b3be48e920, type: 2}
   - {fileID: 11400000, guid: 3ac5da52c1062cc44b09b78832de7bb5, type: 2}
   - {fileID: 11400000, guid: 0be19639d7889bc478c24f43f75c8b43, type: 2}
   - {fileID: 11400000, guid: 2eee4d28be7407b40ab9b4d0c12a5f67, type: 2}
@@ -125,6 +144,12 @@ MonoBehaviour:
   Skills:
   - {fileID: 11400000, guid: c6cb6b8b38c04864b99f912d1d2c94bd, type: 2}
   Enemies:
+  - {fileID: 11400000, guid: 30bd822e943645d0a109b1870f4dfcff, type: 2}
+  - {fileID: 11400000, guid: c9ff7cf1f3eb4d4b8c39881f58165e55, type: 2}
+  - {fileID: 11400000, guid: 064254203748486698c1f764ddd0a4a7, type: 2}
+  - {fileID: 11400000, guid: e4bfcb0356c34df58b0d89c7975c86b3, type: 2}
+  - {fileID: 11400000, guid: 0be0c94e20dc41d280ace616c11a2908, type: 2}
+  - {fileID: 11400000, guid: 272d4348ce2048b88f0aa09ee7493c1f, type: 2}
   - {fileID: 11400000, guid: 7da3b38815e76fb458dd32486c6f57da, type: 2}
   - {fileID: 11400000, guid: f9b1149dc40e722438254eaec670aa48, type: 2}
   - {fileID: 11400000, guid: d2e3c1973d42ec94dbc581193c722630, type: 2}
@@ -153,5 +178,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5512d35a21a07d6488f3b35dafec70b6, type: 2}
   DayEvents:
   - {fileID: 11400000, guid: a8380850057273e47a251aeec852e9a8, type: 2}
+  - {fileID: 11400000, guid: 3f9e050ed3ec50b43b06986201f502dd, type: 2}
+  - {fileID: 11400000, guid: cc15c985aa08a004cb6ea1aee836d5e4, type: 2}
+  - {fileID: 11400000, guid: 698bb5d8e4477634ab7cce1dcbd05eef, type: 2}
   Resources:
   - {fileID: 11400000, guid: 2452b1754786c3f43932210d179d39ef, type: 2}

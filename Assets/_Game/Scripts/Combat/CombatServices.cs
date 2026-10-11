@@ -129,7 +129,13 @@ namespace Spotlight.Combat
             {
                 if (actor.CurrentHp <= 0 || !actor.Targetable) continue;
                 CellCoord end; bool hasEnd = Board.TryWorldToCell(actor.Position, out end);
-                foreach (CellSnapshot cell in Board.TraceSegment(actor.PreviousPosition, actor.Position))
+                var contactCells = new List<CellSnapshot>(); var visited = new HashSet<CellCoord>();
+                foreach (CellSnapshot crossed in Board.TraceSegment(actor.PreviousPosition, actor.Position))
+                    if (visited.Add(crossed.Cell)) contactCells.Add(crossed);
+                // Segment queries can omit a stationary actor or an exact endpoint. Its current
+                // cell still supplies ongoing contact, governed by the same contact cooldown.
+                CellSnapshot current; if (hasEnd && visited.Add(end) && Board.TryGetCell(end, out current)) contactCells.Add(current);
+                foreach (CellSnapshot cell in contactCells)
                 {
                     if (cell.OccupantKind != OccupantKind.ElementBlock) continue;
                     ElementDefinition definition; if (!Catalog.TryGetElement(cell.DefinitionId, out definition) || definition.ContactEffects == null || definition.ContactEffects.Count == 0) continue;
@@ -242,7 +248,10 @@ namespace Spotlight.Combat
         internal void ClearNightTransient() { gauges.Clear(); groups.Clear(); statusQueue.Clear(); gaugeQueue.Clear(); reserved.Clear(); }
         internal void Reserve(IReadOnlyList<long> ids) { foreach (long id in ids) reserved.Add(id); }
         internal void Release(IReadOnlyList<long> ids) { foreach (long id in ids) reserved.Remove(id); }
-        public void ClearTransient(EntityId actor) { gauges.Remove(actor.Value); groups.Remove(actor.Value); }
+        public void ClearTransient(EntityId actor) {
+            List<Group> list; if (groups.TryGetValue(actor.Value, out list)) foreach (Group g in list) foreach (Layer l in g.Layers) reserved.Remove(l.Id);
+            gauges.Remove(actor.Value); groups.Remove(actor.Value);
+        }
         private GaugeDefinition Definition(int index)
         { foreach (GaugeDefinition d in owner.Catalog.GetGaugeDefinitions()) if ((int)d.Element == index + 1) return d; return null; }
         private Gauge[] GetGaugeState(EntityId actor)
@@ -296,9 +305,10 @@ namespace Spotlight.Combat
         internal ErrorCode CheckStatus(StatusApplyRequest request)
         {
             if (request == null || request.Stacks <= 0 || !CombatMath.Finite(request.DurationOverride) || request.DurationOverride < 0 || !CombatMath.Finite(request.SnapshotDamageMultiplier) || request.SnapshotDamageMultiplier <= 0) return ErrorCode.InvalidArgument;
-            ActorSnapshot actor; if (!owner.World.TryGetActor(request.Target, out actor) || actor.Kind != ActorKind.Enemy) return ErrorCode.InvalidTarget;
+            ActorSnapshot actor; if (!owner.World.TryGetActor(request.Target, out actor) || (actor.Kind != ActorKind.Enemy && actor.Kind != ActorKind.Tower)) return ErrorCode.InvalidTarget;
             if (actor.CurrentHp <= 0) return ErrorCode.TargetDead;
             StatusDefinition d; if (!owner.Catalog.TryGetStatus(request.StatusId, out d) || d.MaxStacks <= 0 || d.DurationSeconds <= 0) return ErrorCode.InvalidDefinition;
+            if (actor.Kind == ActorKind.Tower && d.IsReactionInput) return ErrorCode.InvalidTarget;
             return ErrorCode.None;
         }
         public OperationResult EnqueueGauge(EntityId source, EntityId target, ElementAmounts amounts)
@@ -354,6 +364,11 @@ namespace Spotlight.Combat
         }
         internal void Advance(float delta)
         {
+            // Removed actors cannot retain status/gauge state across replacement or later sessions.
+            var removed = new List<long>();
+            foreach (long id in groups.Keys) { ActorSnapshot a; if (!owner.World.TryGetActor(new EntityId(id), out a) || a.CurrentHp <= 0) removed.Add(id); }
+            foreach (long id in gauges.Keys) { ActorSnapshot a; if ((!owner.World.TryGetActor(new EntityId(id), out a) || a.CurrentHp <= 0) && !removed.Contains(id)) removed.Add(id); }
+            foreach (long id in removed) ClearTransient(new EntityId(id));
             foreach (KeyValuePair<long, Gauge[]> pair in gauges)
                 for (int i = 0; i < 6; i++) { GaugeDefinition d = Definition(i); if (d == null) continue; double begin = Math.Max(owner.Time - delta, pair.Value[i].LastHit + d.DecayDelaySeconds); float elapsed = (float)Math.Max(0, owner.Time - begin); pair.Value[i].Value = Math.Max(0, pair.Value[i].Value - d.DecayPerSecond * elapsed); }
             foreach (KeyValuePair<long, List<Group>> pair in groups)
@@ -367,7 +382,7 @@ namespace Spotlight.Combat
                     {
                         while (l.NextTick <= owner.Time + 0.000001 && l.NextTick <= l.Expiry + 0.000001)
                         {
-                            owner.Damage.Enqueue(new DamagePacket { PacketId = "dot:" + actor.Value + ":" + l.Id + ":" + l.NextTick.ToString("R", System.Globalization.CultureInfo.InvariantCulture), Source = l.Source, Target = actor, Origin = DamageOrigin.StatusDot, ReactionId = l.Reaction,
+                            if (d.DotPhysicalPerStack > 0 || !CombatMath.Zero(d.DotElementPerStack)) owner.Damage.Enqueue(new DamagePacket { PacketId = "dot:" + actor.Value + ":" + l.Id + ":" + l.NextTick.ToString("R", System.Globalization.CultureInfo.InvariantCulture), Source = l.Source, Target = actor, Origin = DamageOrigin.StatusDot, ReactionId = l.Reaction,
                                 PhysicalDamage = d.DotPhysicalPerStack, ElementDamage = d.DotElementPerStack, DamageMultiplier = l.Multiplier });
                             l.NextTick += d.TickIntervalSeconds;
                             if (d.TickIntervalSeconds <= 0) break;

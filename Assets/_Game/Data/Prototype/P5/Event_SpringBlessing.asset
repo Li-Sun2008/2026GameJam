@@ -17,18 +17,18 @@ MonoBehaviour:
   MaxDayInclusive: 7
   Modes: 0000000001000000
   Weight: 1
-  Text: "\u672C\u8F6E\u6D4B\u8BD5\u4E8B\u4EF6"
+  Text: "本轮测试事件：灵泉祝福。免费恢复灵泉15点生命（不超过上限），或领取1个水元素进入手牌。"
   Options:
   - Id: heal
-    Text: "\u6CBB\u6108"
+    Text: "免费恢复灵泉15点生命（不超过上限）"
     Cost: []
     Effects:
-    - Id: 
+    - Id: effect.springblessing.1
       Kind: 1
       TargetPolicy: 1
       ReferenceId: 
       ResourceBucket: 1
-      ResourceAmount: 15
+      ResourceAmount: 0
       PhysicalDamage: 0
       ElementDamage:
         Water: 0
@@ -44,16 +44,16 @@ MonoBehaviour:
         Wood: 0
         Wind: 0
         Thunder: 0
-      Amount: 0
+      Amount: 15
       Stacks: 0
       DurationOverride: 0
-      DamageMultiplier: 0
-      SpeedMultiplier: 0
+      DamageMultiplier: 1
+      SpeedMultiplier: 1
   - Id: take_water
-    Text: "\u53D6\u6C34"
+    Text: "免费领取水元素×1（手牌）"
     Cost: []
     Effects:
-    - Id: 
+    - Id: effect.springblessing.2
       Kind: 4
       TargetPolicy: 4
       ReferenceId: elm.water
@@ -77,5 +77,5 @@ MonoBehaviour:
       Amount: 0
       Stacks: 0
       DurationOverride: 0
-      DamageMultiplier: 0
-      SpeedMultiplier: 0
+      DamageMultiplier: 1
+      SpeedMultiplier: 1

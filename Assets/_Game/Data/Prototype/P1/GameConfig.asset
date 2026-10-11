@@ -19,4 +19,4 @@ MonoBehaviour:
   SpringCollisionRadiusInCells: 0.35
   MaxReactionActionsPerTick: 256
   SpecialSkillId: skill.spotlight
-  TutorialText: "\u653E\u7F6E\u5143\u7D20\u548C\u5854\uFF0C\u7136\u540E\u5F00\u59CB\u591C\u665A\u3002"
+  TutorialText: "白天选择手牌元素或塔，点击空格部署；取消不扣资源。单块生产及木与水、土上下左右四邻接的额外生产在次日黎明结算，产物进入手牌，新产物下一夜才参与生产。木遇火在生产结算时消耗木块，产生的火进入手牌。敌人接触火块会灼烧，接触水块会减速。入夜不可部署，可暂停和切换1x/2x。完成事件后的白天会保存检查点，入夜前也保存；菜单“继续”读取最近白天检查点，不恢复夜间战斗进度。"

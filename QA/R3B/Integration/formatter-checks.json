@@ -1,0 +1,42 @@
+[
+  {
+    "Case": "null",
+    "Actual": "上夜生产：无",
+    "Passed": true
+  },
+  {
+    "Case": "empty",
+    "Actual": "上夜生产：无",
+    "Passed": true
+  },
+  {
+    "Case": "merge/filter",
+    "Actual": "上夜生产：水 +1、木 +3",
+    "Passed": true
+  },
+  {
+    "Case": "fixed order",
+    "Actual": "上夜生产：水 +4、火 +1、土 +5、木 +6、风 +3、雷 +2",
+    "Passed": true
+  },
+  {
+    "Case": "invalid rows",
+    "Actual": "上夜生产：无",
+    "Passed": true
+  },
+  {
+    "Case": "maximum",
+    "Actual": "上夜生产：水 +9223372036854775807",
+    "Passed": true
+  },
+  {
+    "Case": "overflow",
+    "Actual": "上夜生产：水 超出显示范围、木 +2",
+    "Passed": true
+  },
+  {
+    "Case": "no carry-over",
+    "Actual": "上夜生产：水 +1",
+    "Passed": true
+  }
+]
